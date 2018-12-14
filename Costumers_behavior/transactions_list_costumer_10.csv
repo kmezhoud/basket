@@ -1,91 +1,91 @@
 ,Baskets
 1,tropical fruit,soda
 2,pork,rum
-3,root vegetables,processed cheese,yogurt
-4,sausage,newspapers
-5,chicken,coffee
+3,rolls/buns,mayonnaise
+4,root vegetables,processed cheese,yogurt
+5,other vegetables,whole milk,rolls/buns,other vegetables,bottled water,whole milk,yogurt,other vegetables
 6,root vegetables,pickled vegetables
-7,soft cheese,coffee
-8,frozen dessert,yogurt
-9,rolls/buns,mayonnaise
-10,dog food,white bread
-11,frankfurter,whole milk,instant coffee,bottled water
-12,other vegetables,whole milk,rolls/buns,other vegetables,bottled water,whole milk,yogurt,other vegetables
-13,whole milk,root vegetables
-14,whipped/sour cream,coffee
-15,canned beer,semi-finished bread
-16,whole milk,curd
-17,butter,whipped/sour cream,decalcifier
-18,sausage,nuts/prunes
-19,sausage,curd,meat spreads
+7,frankfurter,whole milk,instant coffee,bottled water
+8,chicken,coffee
+9,dog food,white bread
+10,whole milk,root vegetables
+11,soft cheese,coffee
+12,sausage,newspapers
+13,frozen dessert,yogurt
+14,whole milk,curd
+15,sausage,curd,meat spreads
+16,butter,whipped/sour cream,decalcifier
+17,sausage,nuts/prunes
+18,waffles,whole milk,condensed milk
+19,canned beer,semi-finished bread
 20,canned beer,newspapers
-21,waffles,whole milk,condensed milk
-22,hamburger meat,rolls/buns,beverages,dessert,whole milk,domestic eggs,yogurt,soda
-23,butter,whole milk
+21,butter,whole milk
+22,whipped/sour cream,coffee
+23,hamburger meat,rolls/buns,beverages,dessert,whole milk,domestic eggs,yogurt,soda
 24,pip fruit,bottled beer,margarine
 25,soda,beef,beef,rolls/buns,shopping bags,chocolate,processed cheese,brown bread,dessert
-26,specialty cheese,other vegetables
-27,soda,whole milk
+26,bottled water,onions,root vegetables,grapes
+27,specialty cheese,other vegetables
 28,frankfurter,beverages,beef,whole milk,other vegetables,rolls/buns,softener,vinegar,white bread
-29,bottled water,onions,root vegetables,grapes
-30,frankfurter,berries
-31,whole milk,bottled water
-32,brown bread,yogurt
-33,pork,whole milk
-34,pork,specialty chocolate
-35,chicken,whole milk,newspapers
-36,bottled beer,chicken,baking powder,curd
-37,citrus fruit,shopping bags,cream cheese 
-38,margarine,sausage,sausage,pork,citrus fruit,yogurt,frozen meals,other vegetables
-39,chicken,rolls/buns
-40,other vegetables,specialty bar,long life bakery product
+29,frankfurter,berries
+30,soda,whole milk
+31,chicken,rolls/buns
+32,bottled beer,chicken,baking powder,curd
+33,brown bread,yogurt
+34,margarine,sausage,sausage,pork,citrus fruit,yogurt,frozen meals,other vegetables
+35,pork,specialty chocolate
+36,chicken,whole milk,newspapers
+37,other vegetables,specialty bar,long life bakery product
+38,whole milk,bottled water
+39,citrus fruit,shopping bags,cream cheese 
+40,pork,whole milk
 41,dessert,root vegetables
-42,butter,waffles
-43,pip fruit,pork,sausage,dessert,grapes,soda,dessert,yogurt,whole milk
-44,yogurt,whole milk
-45,chicken,beef,white bread,semi-finished bread
-46,frankfurter,bottled water,pickled vegetables
-47,whole milk,chocolate,roll products 
+42,chicken,beef,white bread,semi-finished bread
+43,yogurt,whole milk
+44,whole milk,chocolate,roll products 
+45,pip fruit,pork,sausage,dessert,grapes,soda,dessert,yogurt,whole milk
+46,butter,waffles
+47,hard cheese,other vegetables,whole milk,zwieback
 48,other vegetables,sausage,sliced cheese,rolls/buns
-49,hard cheese,other vegetables,whole milk,zwieback
-50,citrus fruit,domestic eggs
-51,yogurt,whole milk,onions,sugar
-52,other vegetables,rolls/buns
-53,whole milk,flour,whole milk,margarine
-54,ham,sugar
+49,frankfurter,bottled water,pickled vegetables
+50,other vegetables,rolls/buns
+51,sausage,other vegetables,margarine,curd,pastry,newspapers
+52,tropical fruit,zwieback
+53,ham,sugar
+54,whole milk,flour,whole milk,margarine
 55,whole milk,sugar
-56,tropical fruit,zwieback
-57,sausage,other vegetables,margarine,curd,pastry,newspapers
-58,bottled beer,tropical fruit,domestic eggs,baking powder
-59,root vegetables,pastry,rolls/buns,condensed milk,tropical fruit,bathroom cleaner,waffles,canned beer
+56,bottled beer,tropical fruit,domestic eggs,baking powder
+57,root vegetables,pastry,rolls/buns,condensed milk,tropical fruit,bathroom cleaner,waffles,canned beer
+58,citrus fruit,domestic eggs
+59,yogurt,whole milk,onions,sugar
 60,instant coffee,shopping bags
-61,soda,pork
-62,rolls/buns,bottled water,white bread,brown bread
+61,bottled water,berries
+62,whole milk,yogurt,pot plants,pastry,flower (seeds),pudding powder
 63,other vegetables,bottled beer
-64,whipped/sour cream,other vegetables
-65,whole milk,pip fruit
-66,bottled water,berries
-67,whole milk,yogurt,pot plants,pastry,flower (seeds),pudding powder
+64,soda,pork
+65,rolls/buns,bottled water,white bread,brown bread
+66,frankfurter,sausage,packaged fruit/vegetables,yogurt,bottled beer,shopping bags
+67,sausage,soda
 68,liquor (appetizer),chocolate,soda
-69,frankfurter,sausage,packaged fruit/vegetables,yogurt,bottled beer,shopping bags
-70,sausage,soda
-71,yogurt,condensed milk,yogurt
-72,root vegetables,shopping bags
-73,yogurt,salty snack
-74,sausage,root vegetables
-75,whole milk,frozen vegetables
-76,frankfurter,whole milk
-77,specialty chocolate,turkey,canned beer,soda,dental care
-78,pork,brown bread
-79,beef,citrus fruit,whole milk,yogurt
-80,beef,turkey,grapes,shopping bags,sliced cheese,bottled water
-81,pastry,semi-finished bread
-82,other vegetables,coffee
+69,whipped/sour cream,other vegetables
+70,whole milk,pip fruit
+71,beef,citrus fruit,whole milk,yogurt
+72,yogurt,condensed milk,yogurt
+73,whole milk,frozen vegetables
+74,pork,brown bread
+75,frankfurter,whole milk
+76,sausage,root vegetables
+77,yogurt,salty snack
+78,beef,turkey,grapes,shopping bags,sliced cheese,bottled water
+79,specialty chocolate,turkey,canned beer,soda,dental care
+80,root vegetables,shopping bags
+81,pork,tropical fruit,pip fruit,brown bread
+82,pip fruit,soda,domestic eggs
 83,ham,bathroom cleaner
-84,other vegetables,shopping bags,other vegetables
-85,pip fruit,soda,domestic eggs
-86,frankfurter,hard cheese,bottled beer
-87,pork,tropical fruit,pip fruit,brown bread
+84,other vegetables,coffee
+85,whole milk,rolls/buns,canned fruit,onions,soda
+86,pastry,semi-finished bread
+87,frankfurter,hard cheese,bottled beer
 88,misc. beverages,bottled beer,other vegetables,cream cheese 
-89,whole milk,rolls/buns,canned fruit,onions,soda
+89,other vegetables,shopping bags,other vegetables
 90,frankfurter,pip fruit,brown bread

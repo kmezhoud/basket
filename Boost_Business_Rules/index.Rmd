@@ -186,6 +186,7 @@ The option `absolute` plots numeric frequencies of each product independently. T
 ## Alternative way to extract the most sold items
 
 ```{r, echo = TRUE}
+library(ggplot2)
 # How many transactions by product, the data will be arranged by descending
 basket_plot_products <- basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
 
@@ -338,6 +339,6 @@ plot(subRules[1:10], method="paracoord", control = list(reorder = TRUE))
 
 # Conclusion
 
-+ y visualizing graphs and rules, it is possible to make decisions for the positioning of items in the supermarket.
++ The visualizing graphs and rules, it is possible to make decisions for the positioning of items in the supermarket.
 
 + Now, we would place `Whole Milk` and `Vegetables` beside each other; `tea` and `frozens vegetables` also buy `cat food` along side too.

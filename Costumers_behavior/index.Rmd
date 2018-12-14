@@ -10,10 +10,17 @@ output:
   word_document: default
 ---
 
+```{r setup, include=FALSE}
+# Load dataset from url
+basket <- read.csv("http://www.evodevo.it/wp-content/uploads/2018/12/basket.csv")
+# Backup the dataset
+#write.csv(basket, file = "basket_bkp.csv")
+basket
+```
 
 ## Transactions list
 ```{r}
-library(plyr)
+#library(plyr)
 
 transaction_list_costumer <- plyr::ddply(basket,c("Member_number","Date"),
                                 function(df1)paste(df1$itemDescription,
@@ -24,6 +31,7 @@ transaction_list_costumer
 
 ## How many member? and How many products (items)? 
 ```{r}
+library(dplyr)
 # How many member
 base::table(basket$Member_number) %>% length()
 # 3898
