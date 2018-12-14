@@ -1,0 +1,343 @@
+---
+title: "Basket Dataset Analysis Report"
+author: "Karim Mezhoud"
+date: "12/11/2018"
+output:
+  html_notebook: default
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
+---
+# Boost Business of retail supermarket
+The goal of this exercice is to decipher relevant knowledges from Baskets DataSet and boost the business by prositionning products (items).
+
+```{r setup, include=FALSE}
+# Load dataset from url
+basket <- read.csv("http://www.evodevo.it/wp-content/uploads/2018/12/basket.csv")
+# Backup the dataset
+#write.csv(basket, file = "basket_bkp.csv")
+basket
+```
+
+```{r}
+# get the structure of the dataset
+str(basket)
+```
+
+
+# Data Pre-processing
+
+The dataset is a dataframe with 3 columns: Member_number, Date, and Products description.
+The `Member_number` column must be considered as factor, like the id of member.
+The `Date` must be a date type.
+The `itemDascription` is already as.factor
+
+## convert the type of variables
+
+```{r}
+library(magrittr)
+library(dplyr)
+library(tibble)
+
+basket$Member_number <- as.factor(basket$Member_number)
+basket$Date <- as.Date(basket$Date, "%d-%m-%Y")
+# In the case if we have the transaction date as 2010-12-01 08:26:00
+# We can extract time from the column and store in another variable:
+# TransTime<- format(basket$Date,"%H:%M:%S")
+# This line create an other column with Date YMD.
+
+# convert the dataframe as a tibble
+basket <- tibble::as.tibble(basket)
+
+# review the structure and summary
+str(basket)
+summary(basket)
+basket
+```
+
+Now is better formated. We can observe:
++ The Member_number `3180` has the biggest operations (36). 
++ The `Whole milk` product is the most sold with 2502 operations.
++ The sampling data was done during two years, between 2014-01-01 and 2015-12-30.
+
+Before to start the exploration, It is important to check if the dataset countain empty cells or non available data.
+
+## check for any empty or NA cell
+
+```{r}
+# Ckeck for Non Available (NA) cell
+all(is.na(basket))
+# FALSE
+# otherwise we can  use #complete.cases(data) will return a logical vector indicating which rows have no missing values. 
+#Then use the vector to get only rows that are complete using basket[,].
+basket <- basket[complete.cases(basket), ]
+
+basket
+```
+
+
+```{r}
+# get a glimpse of the data
+tibble::glimpse(basket)
+```
+
+
+
+# Context of this dataset
+The dataset is composed by three variables that describe the `money transaction` of multiple `costumers` that bought mutiple `products` recurrently  during a periode of time (date).
+
++ We need to determine how many of `costumer`.
+
++ We need to determine how many of `products` avaibale in this dataset.
+
++ We need to know if is there multiple products that bought together (forming a basket or couffin) for each costumer at a time.
+
+# Exploratory Data Analysis
+
+# Market Basket Analysis
+This dataset gives us a data for all transactions that consists of Products bought in the store by several customers over a period of time.
+The Market Basket Analysis (MBA) uses `Association Rule` mining on the given transaction data. The goal is to use this data to boost the business. The idea this to change the layout of the physical store or rather an online store. For example, put particular product with bad sold rate near to a product with a good rate of sold to boost the business. 
+
+
+
+What we need to do is to group data  by `Member_number`, and `Date`. We need this grouping and apply a function on it and store the output in another dataframe. 
+
+The following lines of code will combine all products from one `Member_number` and `Date` and combine all products from one transaction as one row, with each product, separated by `,`.
+
+```{r}
+library(plyr)
+
+transaction_list <- plyr::ddply(basket,c("Member_number","Date"),
+                       function(df1)paste(df1$itemDescription,
+                       collapse = ","))
+colnames(transaction_list) <- c("Member_number","Date","Baskets")
+transaction_list
+```
+
+
+Well, at all we have `14,963` transactions. Each transaction is composed by a set of products viewed in the colmun `Baskets`. Each a set of products is named a `Basket` or `Couffin`.
+In the following steps we need only the informations in `Baskets` column. We will save it in a file as csv format (comma separate Values).
+
+```{r}
+# Back-Up the transaction List with Member number and Dates.
+transaction_list_bkp <- transaction_list
+
+#set column Member_number of dataframe transaction_list 
+transaction_list$Member_number <- NULL
+#set column Date of dataframe transaction_list
+transaction_list$Date <- NULL
+#Rename column to Baskets
+colnames(transaction_list) <- c("Baskets")
+#Show Dataframe transactionData
+transaction_list
+```
+
+## Data Mining using ```arules``` algorithme
+
+```{r}
+library(arules)
+# Write the Baskets list to a file
+write.csv(transaction_list,"transactions_list.csv", quote = FALSE, row.names = TRUE)
+# load the Baskets list as a basket format using arules package
+tr_list <- read.transactions('transactions_list.csv', format = 'basket', sep=',')
+
+tr_list
+```
+
+```{r}
+summary(tr_list)
+```
+
+
++ There are `14964` transactions and `15131` sold products (One product can be sold several times). Each transaction is a collection of products.
++ The Density is `0.0002339455` tells the percentage of non-zero cells in a sparse matrix. It is the total number of products that are purchased divided by a possible number of products in the matrix.
++ The multiplication of the three values is the total of products were purchased.
+
+```{r}
+round(14964 * 15131 * 0.0002339455)
+```
++ The most frequent products are  whole milk (2363), other vegetables (1827), rolls/buns (1646), soda (1453), yogurt (1285), other (44396)
++ The element length distribution is formulated as  `number of products` / `number of transactions`. For example, there are 205 transactions with only 2 products, and 2727 transactions with 4 products. We can get directly the The element length distribution by ```summary(tr_list)@lengths```.
+
+```{r}
+summary(tr_list)@lengths
+```
+
+
+## Plot the most 10 frequent  sold items
+
+```{r}
+library(RColorBrewer)
+#par(mfrow=c(2,1))
+arules::itemFrequencyPlot(tr_list,topN=10,type="absolute",col=brewer.pal(8,'Pastel2'), main="Absolute Product Frequency Plot")
+arules::itemFrequencyPlot(tr_list,topN=10,type="relative",col=brewer.pal(8,'Pastel2'), main="Relative Product Frequency Plot")
+```
+
+The option `absolute` plots numeric frequencies of each product independently. The `relative` option plots how many times these products have appeared as compared to others.
+
++ Theses plots shows the 10 most sold products. We can view more by changing the argument `topN`. 
+
++ Whole milk and Other vegetables have the most sales.
+
++ To boost the business of citrus fruit, we need foe example to put it in the way of the whole milk or in the way of other vegetables. 
+
+
+## Alternative way to extract the most sold items
+
+```{r, echo = TRUE}
+# How many transactions by product, the data will be arranged by descending
+basket_plot_products <- basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
+
+
+## plot the histogram of the best 50th sold  products
+ggplot2::ggplot(basket_plot_products[1:10,], aes(x = reorder(itemDescription, -N_operations), y = N_operations)) +      
+                                             #aes_string(x = 'itemDescription',  y = 'N_operations')  ## without ordering
+ ggplot2::labs(title = "Overview of the first 10th best solds products during 2014-2015",
+               #fill = "",
+               x= "The products",
+              #colour= Date,
+               y = "The number of sales by product") +    
+      ggplot2::theme(legend.title = element_text( colour="black",
+                                                size=11,
+                                                face="bold"),
+                   title = element_text( size = 12,
+                                         face = 'bold'
+                   ),
+                   text = element_text(size = 10,
+                                       face= 'bold'
+                   ),
+                   axis.text.x=element_text(angle=45, hjust=1),
+                   legend.position = "right",
+                   legend.direction = "vertical"
+    ) +
+ ggplot2::geom_bar(stat="identity", na.rm=TRUE)
+
+
+```
+
+## Applling of APRIORI algorithme 
+
+The next step is to mine the rules using the APRIORI algorithm. The function ```apriori()``` is from `arules` package.
+We can set and optimize the paramter of the `minimum support` of 0.0001, the `minimum confidence` of 0.8, maximum of 10 `products` (maxlen).
+
+```{r}
+#Min Support as 0.0001, confidence as 0.8 and maximum of 10 products.
+association.rules <- arules::apriori(tr_list, parameter = list(supp=0.0001, conf=0.8))  #, maxlen=10
+
+```
+
+**Definition**
+
++ Itemset: Collection of one or more items. K-item-set means a set of k items.
+
++ Support Count: Frequency of occurrence of an item-set
+
++ Support(s): Fraction of transactions that contain the item-set
+
+## Summary of the associated rules
+    
+```{r}
+# summary rules of min Support as 0.0001, confidence as 0.8 and maximum of 10 products.
+summary(association.rules)
+```
+
++ The total number of rules is: **647**
+
++ Distribution of rule length: A length of 4 items has the most rules: **438** and a length of **5** items have the lowest number of rules: **74**.
+
+## Inspect the top 10 rules
+
+```{r}
+inspect(association.rules[1:10])
+```
+
+**Interpretation**
+
++ 100% of the customers who bought 'domestic eggs,rubbing alcohol' also bought 'rankfurter'.
+
++ 100% of the customers who bought 'prosecco,waffles' also bought 'sausage'.
+
+## Extract rules from given products
+For example, we would like to know what costumer buy before buying `canned beer`.
+
+```{r}
+beer.association.rules <- apriori(tr_list, parameter = list(supp=0.0001, conf=0.8),appearance = list(default="lhs",rhs="canned beer"))
+```
+
+## Inspect the top 10 rules
+
+```{r}
+# lhs= canned beer because you want to find out the probability of that in how many customers buy canned beer along with other items
+inspect(head(beer.association.rules))
+```
+**Interpretation**
+
++ Canned beer (**RHS**) was Bought after all sub-baskets (with two items) in the **LHS** column.
+
+# Visualizing Association Rules
+
+A straight-forward visualization of association rules is to use a scatter plot using plot() of the `arulesViz` package.
+It uses `Support` and `Confidence` on the axes.
+
+# Visualize the rules
+
+## scatter plot with 647 rules
+```{r}
+library(arulesViz)
+# Filter rules with confidence greater than 0.4 or 40%
+subRules<-association.rules[quality(association.rules)$confidence>0.4]
+#Plot SubRules
+plot(subRules)
+```
+
+The above plot shows that rules with high lift have low support. You can use the following options:
+
+## Two-key Plot
+
+```{r}
+plot(subRules,method="two-key plot")
+```
++ The two-key plot uses support and confidence on x and y-axis respectively. 
+
++ It uses order for coloring. The order is the number of products in the rule.
+
+##  Interactive visualisation of the Rules
+
+```{r}
+#top10subRules <- head(subRules, n = 10, by = "confidence")
+plot(subRules[1:20], method = "graph",  engine = "htmlwidget", control = list(type = "items"))
+```
+The Arrows pointing from products to rule vertices indicate `LHS` products and an arrow from a rule to an product indicates the `RHS`.
+
+**Interprettaion**
++ The graph shows taht all rules or itineraries focus or `whome milk` and `Vegetables`.
+
++ The graph shows also the people who buy `tea` and `frozens vegetables` also buy `cat food`. We should place these in an aisle together.
+
+# Individual Rule Representation
+
+The `Parallel Coordinates Plot`  is useful to visualized which products along with which items cause what kind of sales.
+
+```{r}
+# Filter top 10 rules with highest lift
+#subRules2<-head(subRules, n=16, by="lift")
+plot(subRules[1:10], method="paracoord", control = list(reorder = TRUE))
+```
+
+**Interpretation**
+
++ The plot shows the itinerary used by the costumers during the shopping.
+
++ The top 10 rules show us that when costumers have `whole milk` and `soap`,  It will be  highly likely that they buy `tropical fruit`.
+
++ The `whole milk` is located at the first position. This means that there is no rule to buy it. Or It is well explosed for customers.
+
++ Each arrow corresponds to a rule.
+
+
+# Conclusion
+
++ y visualizing graphs and rules, it is possible to make decisions for the positioning of items in the supermarket.
+
++ Now, we would place `Whole Milk` and `Vegetables` beside each other; `tea` and `frozens vegetables` also buy `cat food` along side too.
