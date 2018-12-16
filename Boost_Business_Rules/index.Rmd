@@ -1,7 +1,7 @@
 ---
 title: "Basket Dataset Analysis Report"
 author: "Karim Mezhoud"
-date: "12/11/2018"
+date: "12/17/2018"
 output:
   html_document:
     df_print: paged
@@ -57,8 +57,8 @@ basket
 ```
 
 Now is better formated. We can observe:
-+ The Member_number `3180` has the biggest operations (36). 
-+ The `Whole milk` product is the most sold with 2502 operations.
++ The Member_number `3180` has the biggest transactions (36). 
++ The `Whole milk` is the most sold with 2502 transactions.
 + The sampling data was done during two years, between 2014-01-01 and 2015-12-30.
 
 Before to start the exploration, It is important to check if the dataset countain empty cells or non available data.
@@ -85,25 +85,28 @@ tibble::glimpse(basket)
 
 
 # Context of this dataset
-The dataset is composed by three variables that describe the `money transaction` of multiple `costumers` that bought mutiple `products` recurrently  during a periode of time (date).
+The dataset has three variables that describe the `transaction` of multiple `costumers` that bought mutiple `items` recurrently  during 2 years.
 
-+ We need to determine how many of `costumer`.
++ We need to determine how many  `costumer`.
 
-+ We need to determine how many of `products` avaibale in this dataset.
++ We need to determine how many `items` available in this dataset.
 
-+ We need to know if is there multiple products that bought together (forming a basket or couffin) for each costumer at a time.
++ We need to know if is there multiple items that purchased together (forming a basket or couffin) for each costumer.
 
 # Exploratory Data Analysis
 
-# Market Basket Analysis
-This dataset gives us a data for all transactions that consists of Products bought in the store by several customers over a period of time.
-The Market Basket Analysis (MBA) uses `Association Rule` mining on the given transaction data. The goal is to use this data to boost the business. The idea this to change the layout of the physical store or rather an online store. For example, put particular product with bad sold rate near to a product with a good rate of sold to boost the business. 
+Please, follow this link to the [Drafting](https://kmezhoud.github.io/basket/Drafting/) section.
 
+
+# Market Basket Analysis
+This datasetdescribes the transactions done in supermarket during two years. 
+The Market Basket Analysis (MBA) uses `Association Rule`  to extract knowledge about the items, and costumers. 
+The goal of this exercice is to use this data to boost the business. The idea is to change for example the layout of the physical store or rather an online store. For example, put particular product with bad sold rate near to a product with a good rate of sold to boost the business. 
 
 
 What we need to do is to group data  by `Member_number`, and `Date`. We need this grouping and apply a function on it and store the output in another dataframe. 
 
-The following lines of code will combine all products from one `Member_number` and `Date` and combine all products from one transaction as one row, with each product, separated by `,`.
+The following lines of code will combine all items from one `Member_number` and `Date` and combine all items from one transaction as one row, with each item, separated by `,`.
 
 ```{r}
 library(plyr)
@@ -116,7 +119,7 @@ transaction_list
 ```
 
 
-Well, at all we have `14,963` transactions. Each transaction is composed by a set of products viewed in the colmun `Baskets`. Each a set of products is named a `Basket` or `Couffin`.
+Well, at all we have `14,963` transactions. Each transaction is composed by a set of items viewed in the column `Baskets`. Each set of items is named a `Basket` or `Couffin`.
 In the following steps we need only the informations in `Baskets` column. We will save it in a file as csv format (comma separate Values).
 
 ```{r}
@@ -150,22 +153,26 @@ summary(tr_list)
 ```
 
 
-+ There are `14964` transactions and `15131` sold products (One product can be sold several times). Each transaction is a collection of products.
-+ The Density is `0.0002339455` tells the percentage of non-zero cells in a sparse matrix. It is the total number of products that are purchased divided by a possible number of products in the matrix.
++ There are `14964` transactions and `15131` purchased items (One item can be purchased multiple times). Each transaction is a collection of items.
+
++ The Density is `0.0002339455` tells the percentage of non-zero cells in a sparse matrix. It is the total number of items that are purchased and divided by a possible number of items in the matrix.
+
 + The multiplication of the three values is the total of products were purchased.
 
 ```{r}
 round(14964 * 15131 * 0.0002339455)
 ```
-+ The most frequent products are  whole milk (2363), other vegetables (1827), rolls/buns (1646), soda (1453), yogurt (1285), other (44396)
-+ The element length distribution is formulated as  `number of products` / `number of transactions`. For example, there are 205 transactions with only 2 products, and 2727 transactions with 4 products. We can get directly the The element length distribution by ```summary(tr_list)@lengths```.
+
++ The most frequent items are  whole milk (2363), other vegetables (1827), rolls/buns (1646), soda (1453), yogurt (1285), other (44396)
+
++ The element length distribution is formulated as  `number of products` / `number of transactions`. For example, there are 205 transactions with only 2 items, and 2727 transactions with 4 items. We can get directly the element length distribution by ```summary(tr_list)@lengths```.
 
 ```{r}
 summary(tr_list)@lengths
 ```
 
 
-## Plot the most 10 frequent  sold items
+## Plot the most 10 frequent  purchased items
 
 ```{r}
 library(RColorBrewer)
@@ -174,13 +181,13 @@ arules::itemFrequencyPlot(tr_list,topN=10,type="absolute",col=brewer.pal(8,'Past
 arules::itemFrequencyPlot(tr_list,topN=10,type="relative",col=brewer.pal(8,'Pastel2'), main="Relative Product Frequency Plot")
 ```
 
-The option `absolute` plots numeric frequencies of each product independently. The `relative` option plots how many times these products have appeared as compared to others.
+The option `absolute` plots numeric frequencies of each item independently. The `relative` option plots how many times these products have appeared as compared to others.
 
-+ Theses plots shows the 10 most sold products. We can view more by changing the argument `topN`. 
++ Theses plots shows the 10 most sold items. We can view more by changing the argument `topN`. 
 
-+ Whole milk and Other vegetables have the most sales.
++ Whole milk and Other vegetables are in the top.
 
-+ To boost the business of citrus fruit, we need foe example to put it in the way of the whole milk or in the way of other vegetables. 
++ To boost the business of citrus fruit, we need for example to put it in the way of the whole milk or in the way of other vegetables. 
 
 
 ## Alternative way to extract the most sold items
@@ -217,10 +224,11 @@ ggplot2::ggplot(basket_plot_products[1:10,], aes(x = reorder(itemDescription, -N
 
 ```
 
-## Applling of APRIORI algorithme 
+## Applying of ```APRIORI``` algorithme 
 
-The next step is to mine the rules using the APRIORI algorithm. The function ```apriori()``` is from `arules` package.
-We can set and optimize the paramter of the `minimum support` of 0.0001, the `minimum confidence` of 0.8, maximum of 10 `products` (maxlen).
+The next step is to mine the rules using the ```APRIORI``` algorithm. The function ```apriori()``` is from `arules` package.
+
+We can set and optimize the parameter of the `minimum support` of 0.0001, the `minimum confidence` of 0.8, maximum of 10 `items` (maxlen).
 
 ```{r}
 #Min Support as 0.0001, confidence as 0.8 and maximum of 10 products.
@@ -292,7 +300,7 @@ subRules<-association.rules[quality(association.rules)$confidence>0.4]
 plot(subRules)
 ```
 
-The above plot shows that rules with high lift have low support. You can use the following options:
+The above plot shows that rules with high lift have low support. We can use the following options:
 
 ## Two-key Plot
 
@@ -318,7 +326,7 @@ The Arrows pointing from products to rule vertices indicate `LHS` products and a
 
 # Individual Rule Representation
 
-The `Parallel Coordinates Plot`  is useful to visualized which products along with which items cause what kind of sales.
+The `Parallel Coordinates Plot`  is useful to visualized which items were purchased with an other one.
 
 ```{r}
 # Filter top 10 rules with highest lift
@@ -328,7 +336,7 @@ plot(subRules[1:10], method="paracoord", control = list(reorder = TRUE))
 
 **Interpretation**
 
-+ The plot shows the itinerary used by the costumers during the shopping.
++ The plot shows the itinerary of the costumers during the shopping.
 
 + The top 10 rules show us that when costumers have `whole milk` and `soap`,  It will be  highly likely that they buy `tropical fruit`.
 
@@ -339,6 +347,6 @@ plot(subRules[1:10], method="paracoord", control = list(reorder = TRUE))
 
 # Conclusion
 
-+ The visualizing graphs and rules, it is possible to make decisions for the positioning of items in the supermarket.
++ The visualizing graphs and rules,help us to take decisions for the positioning of items in the supermarket.
 
 + Now, we would place `Whole Milk` and `Vegetables` beside each other; `tea` and `frozens vegetables` also buy `cat food` along side too.

@@ -1,7 +1,7 @@
 ---
 title: "Costumers Data Analysis"
 author: "Karim Mezhoud"
-date: "12/11/2018"
+date: "12/17/2018"
 output:
   html_document:
     df_print: paged
@@ -29,14 +29,14 @@ colnames(transaction_list_costumer) <- c("Member_number","Date","Baskets")
 transaction_list_costumer
 ```
 
-## How many member? and How many products (items)? 
+## How many members? and How many items? 
 ```{r}
 library(dplyr)
 # How many member
 base::table(basket$Member_number) %>% length()
 # 3898
 
-# How many products
+# How many items
 base::table(basket$itemDescription) %>% length()
 # 167
 ```
@@ -102,7 +102,7 @@ summary(tr_list_costumer_10)
 ```
 The summary shows that the baskets with **3** items are the most frequent: **50** transactions.
 
-## The most 10 important items (Products) for the most 10 important costumers
+## The most 10 important items for the most 10 important costumers
 
 ```{r}
 library(RColorBrewer)
@@ -111,16 +111,16 @@ arules::itemFrequencyPlot(tr_list_costumer_10,topN=10,type="absolute",col=brewer
 arules::itemFrequencyPlot(tr_list_costumer_10,topN=10,type="relative",col=brewer.pal(8,'Pastel2'), main="Relative Product Frequency Plot for the 10 most important Costumers")
 ```
 
-The `whole milk` and `other vegetables`  remain at the first rank. The `yogurt` transactions progress from **5th** position to the **3rd**.  Also we observe a progress for `Sausage` (9->6th), but a consdetable regress of the `root vegetables` from **6th** to **10th** position.
+The `whole milk` and `other vegetables`  remain at the first rank. The `yogurt` transactions progress from **5th** position to the **3rd**.  Also we observe a progress for `Sausage` (9->6th), but a considerable regress of the `root vegetables` from **6th** to **10th** position.
 
-## Apply ```Arules``` algothimes to predict Rules that associate items (Products)
+## Apply ```Arules``` algothimes to predict Rules that associate items
 
 ```{r}
 #Min Support as 0.0001, confidence as 0.9 and maximum of 3 (where ther the most number of transaction (itemset/transaction)) products.
 association.rules_Costumer_10 <- arules::apriori(tr_list_costumer_10, parameter = list(supp=0.0001, conf=0.9, maxlen=10))
 ```
 
-With 0.0001 support, 0.9 of confidence and 3 maximums itesm per basket, we obtain **17690** rules.
+With 0.0001 support, 0.9 of confidence and 3 maximums items per basket, we obtain **17690** rules.
 
 ## Summary of the Rules of the 10 most important items specific to the 10 most important costumers
 
@@ -150,9 +150,9 @@ plot(subRules_costumer_10)
 plot(subRules_costumer_10,method="two-key plot")
 ```
 
-+ This plot shows that the most frequenct fraction of transactions that contain  3 or 4 items (purple, blue) (support).
++ This plot shows that the most frequent fraction of transactions that contain  3 or 4 items (purple, blue) (support).
 
-## Interactive visualisation of the Rules of the most 10 importantitems for the best 1O costumers
+## Interactive visualisation of the Rules of the most 10 important items for the best 1O costumers
 
 ```{r}
 #top10subRules_costumer_10 <- head(subRules_costumer_10, n = 16, by = "confidence")

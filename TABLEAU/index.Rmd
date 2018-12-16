@@ -1,7 +1,7 @@
 ---
 title: "TABLEAU Assays"
 author: "Karim Mezhoud"
-date: "12/15/2018"
+date: "12/17/2018"
 output:
   html_document: default
   pdf_document: default
@@ -13,7 +13,7 @@ There are different graphes that can illustrate le most important purchased item
 
 ### Highlight table of the Top 10 items vs Top 10 costumers
 
-With this highlight table we can view the frequency of the purchases of each item, for each costumer, and during ceratin period.
+With this highlight table we can view the frequency of the purchases of each item, for each costumer, and during certain period.
 
 ![Top10 costumers - Top10 products](Top10Cos_Top10_item_HeatMap.png)
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Karim Mezhoud" />
 
-<meta name="date" content="2018-12-11" />
+<meta name="date" content="2018-12-17" />
 
 <title>Basket Dataset Analysis Report</title>
 
@@ -237,7 +237,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Basket Dataset Analysis Report</h1>
 <h4 class="author"><em>Karim Mezhoud</em></h4>
-<h4 class="date"><em>12/11/2018</em></h4>
+<h4 class="date"><em>12/17/2018</em></h4>
 
 </div>
 
@@ -250,6 +250,10 @@ $(document).ready(function () {
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBnZXQgdGhlIHN0cnVjdHVyZSBvZiB0aGUgZGF0YXNldFxuc3RyKGJhc2tldClcbmBgYCJ9 -->
+<pre class="r"><code># get the structure of the dataset
+str(basket)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -260,102 +264,219 @@ $(document).ready(function () {
 <h2>convert the type of variables</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShtYWdyaXR0cilcbmxpYnJhcnkoZHBseXIpXG5saWJyYXJ5KHRpYmJsZSlcblxuYmFza2V0JE1lbWJlcl9udW1iZXIgPC0gYXMuZmFjdG9yKGJhc2tldCRNZW1iZXJfbnVtYmVyKVxuYmFza2V0JERhdGUgPC0gYXMuRGF0ZShiYXNrZXQkRGF0ZSwgXCIlZC0lbS0lWVwiKVxuIyBJbiB0aGUgY2FzZSBpZiB3ZSBoYXZlIHRoZSB0cmFuc2FjdGlvbiBkYXRlIGFzIDIwMTAtMTItMDEgMDg6MjY6MDBcbiMgV2UgY2FuIGV4dHJhY3QgdGltZSBmcm9tIHRoZSBjb2x1bW4gYW5kIHN0b3JlIGluIGFub3RoZXIgdmFyaWFibGU6XG4jIFRyYW5zVGltZTwtIGZvcm1hdChiYXNrZXQkRGF0ZSxcIiVIOiVNOiVTXCIpXG4jIFRoaXMgbGluZSBjcmVhdGUgYW4gb3RoZXIgY29sdW1uIHdpdGggRGF0ZSBZTUQuXG5cbiMgY29udmVydCB0aGUgZGF0YWZyYW1lIGFzIGEgdGliYmxlXG5iYXNrZXQgPC0gdGliYmxlOjphcy50aWJibGUoYmFza2V0KVxuXG4jIHJldmlldyB0aGUgc3RydWN0dXJlIGFuZCBzdW1tYXJ5XG5zdHIoYmFza2V0KVxuc3VtbWFyeShiYXNrZXQpXG5iYXNrZXRcbmBgYCJ9 -->
+<pre class="r"><code>library(magrittr)
+library(dplyr)
+library(tibble)
+
+basket$Member_number &lt;- as.factor(basket$Member_number)
+basket$Date &lt;- as.Date(basket$Date, &quot;%d-%m-%Y&quot;)
+# In the case if we have the transaction date as 2010-12-01 08:26:00
+# We can extract time from the column and store in another variable:
+# TransTime&lt;- format(basket$Date,&quot;%H:%M:%S&quot;)
+# This line create an other column with Date YMD.
+
+# convert the dataframe as a tibble
+basket &lt;- tibble::as.tibble(basket)
+
+# review the structure and summary
+str(basket)
+summary(basket)
+basket</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now is better formated. We can observe: + The Member_number <code>3180</code> has the biggest operations (36). + The <code>Whole milk</code> product is the most sold with 2502 operations. + The sampling data was done during two years, between 2014-01-01 and 2015-12-30.</p>
+<p>Now is better formated. We can observe: + The Member_number <code>3180</code> has the biggest transactions (36). + The <code>Whole milk</code> is the most sold with 2502 transactions. + The sampling data was done during two years, between 2014-01-01 and 2015-12-30.</p>
 <p>Before to start the exploration, It is important to check if the dataset countain empty cells or non available data.</p>
 </div>
 <div id="check-for-any-empty-or-na-cell" class="section level2">
 <h2>check for any empty or NA cell</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBDa2VjayBmb3IgTm9uIEF2YWlsYWJsZSAoTkEpIGNlbGxcbmFsbChpcy5uYShiYXNrZXQpKVxuIyBGQUxTRVxuIyBvdGhlcndpc2Ugd2UgY2FuICB1c2UgI2NvbXBsZXRlLmNhc2VzKGRhdGEpIHdpbGwgcmV0dXJuIGEgbG9naWNhbCB2ZWN0b3IgaW5kaWNhdGluZyB3aGljaCByb3dzIGhhdmUgbm8gbWlzc2luZyB2YWx1ZXMuIFxuI1RoZW4gdXNlIHRoZSB2ZWN0b3IgdG8gZ2V0IG9ubHkgcm93cyB0aGF0IGFyZSBjb21wbGV0ZSB1c2luZyBiYXNrZXRbLF0uXG5iYXNrZXQgPC0gYmFza2V0W2NvbXBsZXRlLmNhc2VzKGJhc2tldCksIF1cblxuYmFza2V0XG5gYGAifQ== -->
+<pre class="r"><code># Ckeck for Non Available (NA) cell
+all(is.na(basket))
+# FALSE
+# otherwise we can  use #complete.cases(data) will return a logical vector indicating which rows have no missing values. 
+#Then use the vector to get only rows that are complete using basket[,].
+basket &lt;- basket[complete.cases(basket), ]
+
+basket</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBnZXQgYSBnbGltcHNlIG9mIHRoZSBkYXRhXG50aWJibGU6OmdsaW1wc2UoYmFza2V0KVxuYGBgIn0= -->
+<pre class="r"><code># get a glimpse of the data
+tibble::glimpse(basket)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
 </div>
 <div id="context-of-this-dataset" class="section level1">
 <h1>Context of this dataset</h1>
-<p>The dataset is composed by three variables that describe the <code>money transaction</code> of multiple <code>costumers</code> that bought mutiple <code>products</code> recurrently during a periode of time (date).</p>
+<p>The dataset has three variables that describe the <code>transaction</code> of multiple <code>costumers</code> that bought mutiple <code>items</code> recurrently during 2 years.</p>
 <ul>
-<li><p>We need to determine how many of <code>costumer</code>.</p></li>
-<li><p>We need to determine how many of <code>products</code> avaibale in this dataset.</p></li>
-<li><p>We need to know if is there multiple products that bought together (forming a basket or couffin) for each costumer at a time.</p></li>
+<li><p>We need to determine how many <code>costumer</code>.</p></li>
+<li><p>We need to determine how many <code>items</code> available in this dataset.</p></li>
+<li><p>We need to know if is there multiple items that purchased together (forming a basket or couffin) for each costumer.</p></li>
 </ul>
 </div>
 <div id="exploratory-data-analysis" class="section level1">
 <h1>Exploratory Data Analysis</h1>
+<p>Please, follow this link to the <a href="https://kmezhoud.github.io/basket/Drafting/">Drafting</a> section.</p>
 </div>
 <div id="market-basket-analysis" class="section level1">
 <h1>Market Basket Analysis</h1>
-<p>This dataset gives us a data for all transactions that consists of Products bought in the store by several customers over a period of time. The Market Basket Analysis (MBA) uses <code>Association Rule</code> mining on the given transaction data. The goal is to use this data to boost the business. The idea this to change the layout of the physical store or rather an online store. For example, put particular product with bad sold rate near to a product with a good rate of sold to boost the business.</p>
+<p>This datasetdescribes the transactions done in supermarket during two years. The Market Basket Analysis (MBA) uses <code>Association Rule</code> to extract knowledge about the items, and costumers. The goal of this exercice is to use this data to boost the business. The idea is to change for example the layout of the physical store or rather an online store. For example, put particular product with bad sold rate near to a product with a good rate of sold to boost the business.</p>
 <p>What we need to do is to group data by <code>Member_number</code>, and <code>Date</code>. We need this grouping and apply a function on it and store the output in another dataframe.</p>
-<p>The following lines of code will combine all products from one <code>Member_number</code> and <code>Date</code> and combine all products from one transaction as one row, with each product, separated by <code>,</code>.</p>
+<p>The following lines of code will combine all items from one <code>Member_number</code> and <code>Date</code> and combine all items from one transaction as one row, with each item, separated by <code>,</code>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShwbHlyKVxuXG50cmFuc2FjdGlvbl9saXN0IDwtIHBseXI6OmRkcGx5KGJhc2tldCxjKFwiTWVtYmVyX251bWJlclwiLFwiRGF0ZVwiKSxcbiAgICAgICAgICAgICAgICAgICAgICAgZnVuY3Rpb24oZGYxKXBhc3RlKGRmMSRpdGVtRGVzY3JpcHRpb24sXG4gICAgICAgICAgICAgICAgICAgICAgIGNvbGxhcHNlID0gXCIsXCIpKVxuY29sbmFtZXModHJhbnNhY3Rpb25fbGlzdCkgPC0gYyhcIk1lbWJlcl9udW1iZXJcIixcIkRhdGVcIixcIkJhc2tldHNcIilcbnRyYW5zYWN0aW9uX2xpc3RcbmBgYCJ9 -->
+<pre class="r"><code>library(plyr)
+
+transaction_list &lt;- plyr::ddply(basket,c(&quot;Member_number&quot;,&quot;Date&quot;),
+                       function(df1)paste(df1$itemDescription,
+                       collapse = &quot;,&quot;))
+colnames(transaction_list) &lt;- c(&quot;Member_number&quot;,&quot;Date&quot;,&quot;Baskets&quot;)
+transaction_list</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Well, at all we have <code>14,963</code> transactions. Each transaction is composed by a set of products viewed in the colmun <code>Baskets</code>. Each a set of products is named a <code>Basket</code> or <code>Couffin</code>. In the following steps we need only the informations in <code>Baskets</code> column. We will save it in a file as csv format (comma separate Values).</p>
+<p>Well, at all we have <code>14,963</code> transactions. Each transaction is composed by a set of items viewed in the column <code>Baskets</code>. Each set of items is named a <code>Basket</code> or <code>Couffin</code>. In the following steps we need only the informations in <code>Baskets</code> column. We will save it in a file as csv format (comma separate Values).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBCYWNrLVVwIHRoZSB0cmFuc2FjdGlvbiBMaXN0IHdpdGggTWVtYmVyIG51bWJlciBhbmQgRGF0ZXMuXG50cmFuc2FjdGlvbl9saXN0X2JrcCA8LSB0cmFuc2FjdGlvbl9saXN0XG5cbiNzZXQgY29sdW1uIE1lbWJlcl9udW1iZXIgb2YgZGF0YWZyYW1lIHRyYW5zYWN0aW9uX2xpc3QgXG50cmFuc2FjdGlvbl9saXN0JE1lbWJlcl9udW1iZXIgPC0gTlVMTFxuI3NldCBjb2x1bW4gRGF0ZSBvZiBkYXRhZnJhbWUgdHJhbnNhY3Rpb25fbGlzdFxudHJhbnNhY3Rpb25fbGlzdCREYXRlIDwtIE5VTExcbiNSZW5hbWUgY29sdW1uIHRvIEJhc2tldHNcbmNvbG5hbWVzKHRyYW5zYWN0aW9uX2xpc3QpIDwtIGMoXCJCYXNrZXRzXCIpXG4jU2hvdyBEYXRhZnJhbWUgdHJhbnNhY3Rpb25EYXRhXG50cmFuc2FjdGlvbl9saXN0XG5gYGAifQ== -->
+<pre class="r"><code># Back-Up the transaction List with Member number and Dates.
+transaction_list_bkp &lt;- transaction_list
+
+#set column Member_number of dataframe transaction_list 
+transaction_list$Member_number &lt;- NULL
+#set column Date of dataframe transaction_list
+transaction_list$Date &lt;- NULL
+#Rename column to Baskets
+colnames(transaction_list) &lt;- c(&quot;Baskets&quot;)
+#Show Dataframe transactionData
+transaction_list</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <div id="data-mining-using-arules-algorithme" class="section level2">
 <h2>Data Mining using <code>arules</code> algorithme</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShhcnVsZXMpXG4jIFdyaXRlIHRoZSBCYXNrZXRzIGxpc3QgdG8gYSBmaWxlXG53cml0ZS5jc3YodHJhbnNhY3Rpb25fbGlzdCxcInRyYW5zYWN0aW9uc19saXN0LmNzdlwiLCBxdW90ZSA9IEZBTFNFLCByb3cubmFtZXMgPSBUUlVFKVxuIyBsb2FkIHRoZSBCYXNrZXRzIGxpc3QgYXMgYSBiYXNrZXQgZm9ybWF0IHVzaW5nIGFydWxlcyBwYWNrYWdlXG50cl9saXN0IDwtIHJlYWQudHJhbnNhY3Rpb25zKCd0cmFuc2FjdGlvbnNfbGlzdC5jc3YnLCBmb3JtYXQgPSAnYmFza2V0Jywgc2VwPScsJylcblxudHJfbGlzdFxuYGBgIn0= -->
+<pre class="r"><code>library(arules)
+# Write the Baskets list to a file
+write.csv(transaction_list,&quot;transactions_list.csv&quot;, quote = FALSE, row.names = TRUE)
+# load the Baskets list as a basket format using arules package
+tr_list &lt;- read.transactions('transactions_list.csv', format = 'basket', sep=',')
+
+tr_list</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeSh0cl9saXN0KVxuYGBgIn0= -->
+<pre class="r"><code>summary(tr_list)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
-<li>There are <code>14964</code> transactions and <code>15131</code> sold products (One product can be sold several times). Each transaction is a collection of products.</li>
-<li>The Density is <code>0.0002339455</code> tells the percentage of non-zero cells in a sparse matrix. It is the total number of products that are purchased divided by a possible number of products in the matrix.</li>
-<li>The multiplication of the three values is the total of products were purchased.</li>
+<li><p>There are <code>14964</code> transactions and <code>15131</code> purchased items (One item can be purchased multiple times). Each transaction is a collection of items.</p></li>
+<li><p>The Density is <code>0.0002339455</code> tells the percentage of non-zero cells in a sparse matrix. It is the total number of items that are purchased and divided by a possible number of items in the matrix.</p></li>
+<li><p>The multiplication of the three values is the total of products were purchased.</p></li>
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucm91bmQoMTQ5NjQgKiAxNTEzMSAqIDAuMDAwMjMzOTQ1NSlcbmBgYCJ9 -->
+<pre class="r"><code>round(14964 * 15131 * 0.0002339455)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
-<li>The most frequent products are whole milk (2363), other vegetables (1827), rolls/buns (1646), soda (1453), yogurt (1285), other (44396)</li>
-<li>The element length distribution is formulated as <code>number of products</code> / <code>number of transactions</code>. For example, there are 205 transactions with only 2 products, and 2727 transactions with 4 products. We can get directly the The element length distribution by <code>summary(tr_list)@lengths</code>.</li>
+<li><p>The most frequent items are whole milk (2363), other vegetables (1827), rolls/buns (1646), soda (1453), yogurt (1285), other (44396)</p></li>
+<li><p>The element length distribution is formulated as <code>number of products</code> / <code>number of transactions</code>. For example, there are 205 transactions with only 2 items, and 2727 transactions with 4 items. We can get directly the element length distribution by <code>summary(tr_list)@lengths</code>.</p></li>
 </ul>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3VtbWFyeSh0cl9saXN0KUBsZW5ndGhzXG5gYGAifQ== -->
+<pre class="r"><code>summary(tr_list)@lengths</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="plot-the-most-10-frequent-sold-items" class="section level2">
-<h2>Plot the most 10 frequent sold items</h2>
+<div id="plot-the-most-10-frequent-purchased-items" class="section level2">
+<h2>Plot the most 10 frequent purchased items</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShSQ29sb3JCcmV3ZXIpXG4jcGFyKG1mcm93PWMoMiwxKSlcbmFydWxlczo6aXRlbUZyZXF1ZW5jeVBsb3QodHJfbGlzdCx0b3BOPTEwLHR5cGU9XCJhYnNvbHV0ZVwiLGNvbD1icmV3ZXIucGFsKDgsJ1Bhc3RlbDInKSwgbWFpbj1cIkFic29sdXRlIFByb2R1Y3QgRnJlcXVlbmN5IFBsb3RcIilcbmFydWxlczo6aXRlbUZyZXF1ZW5jeVBsb3QodHJfbGlzdCx0b3BOPTEwLHR5cGU9XCJyZWxhdGl2ZVwiLGNvbD1icmV3ZXIucGFsKDgsJ1Bhc3RlbDInKSwgbWFpbj1cIlJlbGF0aXZlIFByb2R1Y3QgRnJlcXVlbmN5IFBsb3RcIilcbmBgYCJ9 -->
+<pre class="r"><code>library(RColorBrewer)
+#par(mfrow=c(2,1))
+arules::itemFrequencyPlot(tr_list,topN=10,type=&quot;absolute&quot;,col=brewer.pal(8,'Pastel2'), main=&quot;Absolute Product Frequency Plot&quot;)
+arules::itemFrequencyPlot(tr_list,topN=10,type=&quot;relative&quot;,col=brewer.pal(8,'Pastel2'), main=&quot;Relative Product Frequency Plot&quot;)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The option <code>absolute</code> plots numeric frequencies of each product independently. The <code>relative</code> option plots how many times these products have appeared as compared to others.</p>
+<p>The option <code>absolute</code> plots numeric frequencies of each item independently. The <code>relative</code> option plots how many times these products have appeared as compared to others.</p>
 <ul>
-<li><p>Theses plots shows the 10 most sold products. We can view more by changing the argument <code>topN</code>.</p></li>
-<li><p>Whole milk and Other vegetables have the most sales.</p></li>
-<li><p>To boost the business of citrus fruit, we need foe example to put it in the way of the whole milk or in the way of other vegetables.</p></li>
+<li><p>Theses plots shows the 10 most sold items. We can view more by changing the argument <code>topN</code>.</p></li>
+<li><p>Whole milk and Other vegetables are in the top.</p></li>
+<li><p>To boost the business of citrus fruit, we need for example to put it in the way of the whole milk or in the way of other vegetables.</p></li>
 </ul>
 </div>
 <div id="alternative-way-to-extract-the-most-sold-items" class="section level2">
 <h2>Alternative way to extract the most sold items</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShnZ3Bsb3QyKVxuIyBIb3cgbWFueSB0cmFuc2FjdGlvbnMgYnkgcHJvZHVjdCwgdGhlIGRhdGEgd2lsbCBiZSBhcnJhbmdlZCBieSBkZXNjZW5kaW5nXG5iYXNrZXRfcGxvdF9wcm9kdWN0cyA8LSBiYXNrZXQgJT4lIGdyb3VwX2J5KGl0ZW1EZXNjcmlwdGlvbikgJT4lIGRwbHlyOjpzdW1tYXJpc2UoTl9vcGVyYXRpb25zPW4oKSkgJT4lIGFycmFuZ2UoZGVzYyhOX29wZXJhdGlvbnMpKVxuXG5cbiMjIHBsb3QgdGhlIGhpc3RvZ3JhbSBvZiB0aGUgYmVzdCA1MHRoIHNvbGQgIHByb2R1Y3RzXG5nZ3Bsb3QyOjpnZ3Bsb3QoYmFza2V0X3Bsb3RfcHJvZHVjdHNbMToxMCxdLCBhZXMoeCA9IHJlb3JkZXIoaXRlbURlc2NyaXB0aW9uLCAtTl9vcGVyYXRpb25zKSwgeSA9IE5fb3BlcmF0aW9ucykpICsgICAgICBcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICNhZXNfc3RyaW5nKHggPSAnaXRlbURlc2NyaXB0aW9uJywgIHkgPSAnTl9vcGVyYXRpb25zJykgICMjIHdpdGhvdXQgb3JkZXJpbmdcbiBnZ3Bsb3QyOjpsYWJzKHRpdGxlID0gXCJPdmVydmlldyBvZiB0aGUgZmlyc3QgMTB0aCBiZXN0IHNvbGRzIHByb2R1Y3RzIGR1cmluZyAyMDE0LTIwMTVcIixcbiAgICAgICAgICAgICAgICNmaWxsID0gXCJcIixcbiAgICAgICAgICAgICAgIHg9IFwiVGhlIHByb2R1Y3RzXCIsXG4gICAgICAgICAgICAgICNjb2xvdXI9IERhdGUsXG4gICAgICAgICAgICAgICB5ID0gXCJUaGUgbnVtYmVyIG9mIHNhbGVzIGJ5IHByb2R1Y3RcIikgKyAgICBcbiAgICAgIGdncGxvdDI6OnRoZW1lKGxlZ2VuZC50aXRsZSA9IGVsZW1lbnRfdGV4dCggY29sb3VyPVwiYmxhY2tcIixcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHNpemU9MTEsXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmYWNlPVwiYm9sZFwiKSxcbiAgICAgICAgICAgICAgICAgICB0aXRsZSA9IGVsZW1lbnRfdGV4dCggc2l6ZSA9IDEyLFxuICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmYWNlID0gJ2JvbGQnXG4gICAgICAgICAgICAgICAgICAgKSxcbiAgICAgICAgICAgICAgICAgICB0ZXh0ID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMCxcbiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZhY2U9ICdib2xkJ1xuICAgICAgICAgICAgICAgICAgICksXG4gICAgICAgICAgICAgICAgICAgYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSxcbiAgICAgICAgICAgICAgICAgICBsZWdlbmQucG9zaXRpb24gPSBcInJpZ2h0XCIsXG4gICAgICAgICAgICAgICAgICAgbGVnZW5kLmRpcmVjdGlvbiA9IFwidmVydGljYWxcIlxuICAgICkgK1xuIGdncGxvdDI6Omdlb21fYmFyKHN0YXQ9XCJpZGVudGl0eVwiLCBuYS5ybT1UUlVFKVxuXG5cbmBgYCJ9 -->
+<pre class="r"><code>library(ggplot2)
+# How many transactions by product, the data will be arranged by descending
+basket_plot_products &lt;- basket %&gt;% group_by(itemDescription) %&gt;% dplyr::summarise(N_operations=n()) %&gt;% arrange(desc(N_operations))
+
+
+## plot the histogram of the best 50th sold  products
+ggplot2::ggplot(basket_plot_products[1:10,], aes(x = reorder(itemDescription, -N_operations), y = N_operations)) +      
+                                             #aes_string(x = 'itemDescription',  y = 'N_operations')  ## without ordering
+ ggplot2::labs(title = &quot;Overview of the first 10th best solds products during 2014-2015&quot;,
+               #fill = &quot;&quot;,
+               x= &quot;The products&quot;,
+              #colour= Date,
+               y = &quot;The number of sales by product&quot;) +    
+      ggplot2::theme(legend.title = element_text( colour=&quot;black&quot;,
+                                                size=11,
+                                                face=&quot;bold&quot;),
+                   title = element_text( size = 12,
+                                         face = 'bold'
+                   ),
+                   text = element_text(size = 10,
+                                       face= 'bold'
+                   ),
+                   axis.text.x=element_text(angle=45, hjust=1),
+                   legend.position = &quot;right&quot;,
+                   legend.direction = &quot;vertical&quot;
+    ) +
+ ggplot2::geom_bar(stat=&quot;identity&quot;, na.rm=TRUE)
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="applling-of-apriori-algorithme" class="section level2">
-<h2>Applling of APRIORI algorithme</h2>
-<p>The next step is to mine the rules using the APRIORI algorithm. The function <code>apriori()</code> is from <code>arules</code> package. We can set and optimize the paramter of the <code>minimum support</code> of 0.0001, the <code>minimum confidence</code> of 0.8, maximum of 10 <code>products</code> (maxlen).</p>
+<div id="applying-of-apriori-algorithme" class="section level2">
+<h2>Applying of <code>APRIORI</code> algorithme</h2>
+<p>The next step is to mine the rules using the <code>APRIORI</code> algorithm. The function <code>apriori()</code> is from <code>arules</code> package.</p>
+<p>We can set and optimize the parameter of the <code>minimum support</code> of 0.0001, the <code>minimum confidence</code> of 0.8, maximum of 10 <code>items</code> (maxlen).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI01pbiBTdXBwb3J0IGFzIDAuMDAwMSwgY29uZmlkZW5jZSBhcyAwLjggYW5kIG1heGltdW0gb2YgMTAgcHJvZHVjdHMuXG5hc3NvY2lhdGlvbi5ydWxlcyA8LSBhcnVsZXM6OmFwcmlvcmkodHJfbGlzdCwgcGFyYW1ldGVyID0gbGlzdChzdXBwPTAuMDAwMSwgY29uZj0wLjgpKSAgIywgbWF4bGVuPTEwXG5cbmBgYCJ9 -->
+<pre class="r"><code>#Min Support as 0.0001, confidence as 0.8 and maximum of 10 products.
+association.rules &lt;- arules::apriori(tr_list, parameter = list(supp=0.0001, conf=0.8))  #, maxlen=10
+</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><strong>Definition</strong></p>
@@ -369,6 +490,10 @@ $(document).ready(function () {
 <h2>Summary of the associated rules</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBzdW1tYXJ5IHJ1bGVzIG9mIG1pbiBTdXBwb3J0IGFzIDAuMDAwMSwgY29uZmlkZW5jZSBhcyAwLjggYW5kIG1heGltdW0gb2YgMTAgcHJvZHVjdHMuXG5zdW1tYXJ5KGFzc29jaWF0aW9uLnJ1bGVzKVxuYGBgIn0= -->
+<pre class="r"><code># summary rules of min Support as 0.0001, confidence as 0.8 and maximum of 10 products.
+summary(association.rules)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
@@ -380,6 +505,9 @@ $(document).ready(function () {
 <h2>Inspect the top 10 rules</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW5zcGVjdChhc3NvY2lhdGlvbi5ydWxlc1sxOjEwXSlcbmBgYCJ9 -->
+<pre class="r"><code>inspect(association.rules[1:10])</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><strong>Interpretation</strong></p>
@@ -393,6 +521,9 @@ $(document).ready(function () {
 <p>For example, we would like to know what costumer buy before buying <code>canned beer</code>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYmVlci5hc3NvY2lhdGlvbi5ydWxlcyA8LSBhcHJpb3JpKHRyX2xpc3QsIHBhcmFtZXRlciA9IGxpc3Qoc3VwcD0wLjAwMDEsIGNvbmY9MC44KSxhcHBlYXJhbmNlID0gbGlzdChkZWZhdWx0PVwibGhzXCIscmhzPVwiY2FubmVkIGJlZXJcIikpXG5gYGAifQ== -->
+<pre class="r"><code>beer.association.rules &lt;- apriori(tr_list, parameter = list(supp=0.0001, conf=0.8),appearance = list(default=&quot;lhs&quot;,rhs=&quot;canned beer&quot;))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
@@ -400,6 +531,10 @@ $(document).ready(function () {
 <h2>Inspect the top 10 rules</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBsaHM9IGNhbm5lZCBiZWVyIGJlY2F1c2UgeW91IHdhbnQgdG8gZmluZCBvdXQgdGhlIHByb2JhYmlsaXR5IG9mIHRoYXQgaW4gaG93IG1hbnkgY3VzdG9tZXJzIGJ1eSBjYW5uZWQgYmVlciBhbG9uZyB3aXRoIG90aGVyIGl0ZW1zXG5pbnNwZWN0KGhlYWQoYmVlci5hc3NvY2lhdGlvbi5ydWxlcykpXG5gYGAifQ== -->
+<pre class="r"><code># lhs= canned beer because you want to find out the probability of that in how many customers buy canned beer along with other items
+inspect(head(beer.association.rules))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><strong>Interpretation</strong></p>
@@ -418,14 +553,24 @@ $(document).ready(function () {
 <h2>scatter plot with 647 rules</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubGlicmFyeShhcnVsZXNWaXopXG4jIEZpbHRlciBydWxlcyB3aXRoIGNvbmZpZGVuY2UgZ3JlYXRlciB0aGFuIDAuNCBvciA0MCVcbnN1YlJ1bGVzPC1hc3NvY2lhdGlvbi5ydWxlc1txdWFsaXR5KGFzc29jaWF0aW9uLnJ1bGVzKSRjb25maWRlbmNlPjAuNF1cbiNQbG90IFN1YlJ1bGVzXG5wbG90KHN1YlJ1bGVzKVxuYGBgIn0= -->
+<pre class="r"><code>library(arulesViz)
+# Filter rules with confidence greater than 0.4 or 40%
+subRules&lt;-association.rules[quality(association.rules)$confidence&gt;0.4]
+#Plot SubRules
+plot(subRules)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The above plot shows that rules with high lift have low support. You can use the following options:</p>
+<p>The above plot shows that rules with high lift have low support. We can use the following options:</p>
 </div>
 <div id="two-key-plot" class="section level2">
 <h2>Two-key Plot</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChzdWJSdWxlcyxtZXRob2Q9XCJ0d28ta2V5IHBsb3RcIilcbmBgYCJ9 -->
+<pre class="r"><code>plot(subRules,method=&quot;two-key plot&quot;)</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <ul>
@@ -437,6 +582,10 @@ $(document).ready(function () {
 <h2>Interactive visualisation of the Rules</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuI3RvcDEwc3ViUnVsZXMgPC0gaGVhZChzdWJSdWxlcywgbiA9IDEwLCBieSA9IFwiY29uZmlkZW5jZVwiKVxucGxvdChzdWJSdWxlc1sxOjIwXSwgbWV0aG9kID0gXCJncmFwaFwiLCAgZW5naW5lID0gXCJodG1sd2lkZ2V0XCIsIGNvbnRyb2wgPSBsaXN0KHR5cGUgPSBcIml0ZW1zXCIpKVxuYGBgIn0= -->
+<pre class="r"><code>#top10subRules &lt;- head(subRules, n = 10, by = &quot;confidence&quot;)
+plot(subRules[1:20], method = &quot;graph&quot;,  engine = &quot;htmlwidget&quot;, control = list(type = &quot;items&quot;))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p>The Arrows pointing from products to rule vertices indicate <code>LHS</code> products and an arrow from a rule to an product indicates the <code>RHS</code>.</p>
@@ -448,14 +597,19 @@ $(document).ready(function () {
 </div>
 <div id="individual-rule-representation" class="section level1">
 <h1>Individual Rule Representation</h1>
-<p>The <code>Parallel Coordinates Plot</code> is useful to visualized which products along with which items cause what kind of sales.</p>
+<p>The <code>Parallel Coordinates Plot</code> is useful to visualized which items were purchased with an other one.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuIyBGaWx0ZXIgdG9wIDEwIHJ1bGVzIHdpdGggaGlnaGVzdCBsaWZ0XG4jc3ViUnVsZXMyPC1oZWFkKHN1YlJ1bGVzLCBuPTE2LCBieT1cImxpZnRcIilcbnBsb3Qoc3ViUnVsZXNbMToxMF0sIG1ldGhvZD1cInBhcmFjb29yZFwiLCBjb250cm9sID0gbGlzdChyZW9yZGVyID0gVFJVRSkpXG5gYGAifQ== -->
+<pre class="r"><code># Filter top 10 rules with highest lift
+#subRules2&lt;-head(subRules, n=16, by=&quot;lift&quot;)
+plot(subRules[1:10], method=&quot;paracoord&quot;, control = list(reorder = TRUE))</code></pre>
+<!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 <p><strong>Interpretation</strong></p>
 <ul>
-<li><p>The plot shows the itinerary used by the costumers during the shopping.</p></li>
+<li><p>The plot shows the itinerary of the costumers during the shopping.</p></li>
 <li><p>The top 10 rules show us that when costumers have <code>whole milk</code> and <code>soap</code>, It will be highly likely that they buy <code>tropical fruit</code>.</p></li>
 <li><p>The <code>whole milk</code> is located at the first position. This means that there is no rule to buy it. Or It is well explosed for customers.</p></li>
 <li><p>Each arrow corresponds to a rule.</p></li>
@@ -464,13 +618,13 @@ $(document).ready(function () {
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
 <ul>
-<li><p>The visualizing graphs and rules, it is possible to make decisions for the positioning of items in the supermarket.</p></li>
+<li><p>The visualizing graphs and rules,help us to take decisions for the positioning of items in the supermarket.</p></li>
 <li><p>Now, we would place <code>Whole Milk</code> and <code>Vegetables</code> beside each other; <code>tea</code> and <code>frozens vegetables</code> also buy <code>cat food</code> along side too.</p></li>
 </ul>
 <!-- rnb-text-end -->
 </div>
 
-<div id="rmd-source-code">LS0tCnRpdGxlOiAiQmFza2V0IERhdGFzZXQgQW5hbHlzaXMgUmVwb3J0IgphdXRob3I6ICJLYXJpbSBNZXpob3VkIgpkYXRlOiAiMTIvMTEvMjAxOCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICBkZl9wcmludDogcGFnZWQKICBodG1sX25vdGVib29rOiBkZWZhdWx0CiAgcGRmX2RvY3VtZW50OiBkZWZhdWx0CiAgd29yZF9kb2N1bWVudDogZGVmYXVsdAotLS0KIyBCb29zdCBCdXNpbmVzcyBvZiByZXRhaWwgc3VwZXJtYXJrZXQKVGhlIGdvYWwgb2YgdGhpcyBleGVyY2ljZSBpcyB0byBkZWNpcGhlciByZWxldmFudCBrbm93bGVkZ2VzIGZyb20gQmFza2V0cyBEYXRhU2V0IGFuZCBib29zdCB0aGUgYnVzaW5lc3MgYnkgcHJvc2l0aW9ubmluZyBwcm9kdWN0cyAoaXRlbXMpLgoKYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9CiMgTG9hZCBkYXRhc2V0IGZyb20gdXJsCmJhc2tldCA8LSByZWFkLmNzdigiaHR0cDovL3d3dy5ldm9kZXZvLml0L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzEyL2Jhc2tldC5jc3YiKQojIEJhY2t1cCB0aGUgZGF0YXNldAojd3JpdGUuY3N2KGJhc2tldCwgZmlsZSA9ICJiYXNrZXRfYmtwLmNzdiIpCmJhc2tldApgYGAKCmBgYHtyfQojIGdldCB0aGUgc3RydWN0dXJlIG9mIHRoZSBkYXRhc2V0CnN0cihiYXNrZXQpCmBgYAoKCiMgRGF0YSBQcmUtcHJvY2Vzc2luZwoKVGhlIGRhdGFzZXQgaXMgYSBkYXRhZnJhbWUgd2l0aCAzIGNvbHVtbnM6IE1lbWJlcl9udW1iZXIsIERhdGUsIGFuZCBQcm9kdWN0cyBkZXNjcmlwdGlvbi4KVGhlIGBNZW1iZXJfbnVtYmVyYCBjb2x1bW4gbXVzdCBiZSBjb25zaWRlcmVkIGFzIGZhY3RvciwgbGlrZSB0aGUgaWQgb2YgbWVtYmVyLgpUaGUgYERhdGVgIG11c3QgYmUgYSBkYXRlIHR5cGUuClRoZSBgaXRlbURhc2NyaXB0aW9uYCBpcyBhbHJlYWR5IGFzLmZhY3RvcgoKIyMgY29udmVydCB0aGUgdHlwZSBvZiB2YXJpYWJsZXMKCmBgYHtyfQpsaWJyYXJ5KG1hZ3JpdHRyKQpsaWJyYXJ5KGRwbHlyKQpsaWJyYXJ5KHRpYmJsZSkKCmJhc2tldCRNZW1iZXJfbnVtYmVyIDwtIGFzLmZhY3RvcihiYXNrZXQkTWVtYmVyX251bWJlcikKYmFza2V0JERhdGUgPC0gYXMuRGF0ZShiYXNrZXQkRGF0ZSwgIiVkLSVtLSVZIikKIyBJbiB0aGUgY2FzZSBpZiB3ZSBoYXZlIHRoZSB0cmFuc2FjdGlvbiBkYXRlIGFzIDIwMTAtMTItMDEgMDg6MjY6MDAKIyBXZSBjYW4gZXh0cmFjdCB0aW1lIGZyb20gdGhlIGNvbHVtbiBhbmQgc3RvcmUgaW4gYW5vdGhlciB2YXJpYWJsZToKIyBUcmFuc1RpbWU8LSBmb3JtYXQoYmFza2V0JERhdGUsIiVIOiVNOiVTIikKIyBUaGlzIGxpbmUgY3JlYXRlIGFuIG90aGVyIGNvbHVtbiB3aXRoIERhdGUgWU1ELgoKIyBjb252ZXJ0IHRoZSBkYXRhZnJhbWUgYXMgYSB0aWJibGUKYmFza2V0IDwtIHRpYmJsZTo6YXMudGliYmxlKGJhc2tldCkKCiMgcmV2aWV3IHRoZSBzdHJ1Y3R1cmUgYW5kIHN1bW1hcnkKc3RyKGJhc2tldCkKc3VtbWFyeShiYXNrZXQpCmJhc2tldApgYGAKCk5vdyBpcyBiZXR0ZXIgZm9ybWF0ZWQuIFdlIGNhbiBvYnNlcnZlOgorIFRoZSBNZW1iZXJfbnVtYmVyIGAzMTgwYCBoYXMgdGhlIGJpZ2dlc3Qgb3BlcmF0aW9ucyAoMzYpLiAKKyBUaGUgYFdob2xlIG1pbGtgIHByb2R1Y3QgaXMgdGhlIG1vc3Qgc29sZCB3aXRoIDI1MDIgb3BlcmF0aW9ucy4KKyBUaGUgc2FtcGxpbmcgZGF0YSB3YXMgZG9uZSBkdXJpbmcgdHdvIHllYXJzLCBiZXR3ZWVuIDIwMTQtMDEtMDEgYW5kIDIwMTUtMTItMzAuCgpCZWZvcmUgdG8gc3RhcnQgdGhlIGV4cGxvcmF0aW9uLCBJdCBpcyBpbXBvcnRhbnQgdG8gY2hlY2sgaWYgdGhlIGRhdGFzZXQgY291bnRhaW4gZW1wdHkgY2VsbHMgb3Igbm9uIGF2YWlsYWJsZSBkYXRhLgoKIyMgY2hlY2sgZm9yIGFueSBlbXB0eSBvciBOQSBjZWxsCgpgYGB7cn0KIyBDa2VjayBmb3IgTm9uIEF2YWlsYWJsZSAoTkEpIGNlbGwKYWxsKGlzLm5hKGJhc2tldCkpCiMgRkFMU0UKIyBvdGhlcndpc2Ugd2UgY2FuICB1c2UgI2NvbXBsZXRlLmNhc2VzKGRhdGEpIHdpbGwgcmV0dXJuIGEgbG9naWNhbCB2ZWN0b3IgaW5kaWNhdGluZyB3aGljaCByb3dzIGhhdmUgbm8gbWlzc2luZyB2YWx1ZXMuIAojVGhlbiB1c2UgdGhlIHZlY3RvciB0byBnZXQgb25seSByb3dzIHRoYXQgYXJlIGNvbXBsZXRlIHVzaW5nIGJhc2tldFssXS4KYmFza2V0IDwtIGJhc2tldFtjb21wbGV0ZS5jYXNlcyhiYXNrZXQpLCBdCgpiYXNrZXQKYGBgCgoKYGBge3J9CiMgZ2V0IGEgZ2xpbXBzZSBvZiB0aGUgZGF0YQp0aWJibGU6OmdsaW1wc2UoYmFza2V0KQpgYGAKCgoKIyBDb250ZXh0IG9mIHRoaXMgZGF0YXNldApUaGUgZGF0YXNldCBpcyBjb21wb3NlZCBieSB0aHJlZSB2YXJpYWJsZXMgdGhhdCBkZXNjcmliZSB0aGUgYG1vbmV5IHRyYW5zYWN0aW9uYCBvZiBtdWx0aXBsZSBgY29zdHVtZXJzYCB0aGF0IGJvdWdodCBtdXRpcGxlIGBwcm9kdWN0c2AgcmVjdXJyZW50bHkgIGR1cmluZyBhIHBlcmlvZGUgb2YgdGltZSAoZGF0ZSkuCgorIFdlIG5lZWQgdG8gZGV0ZXJtaW5lIGhvdyBtYW55IG9mIGBjb3N0dW1lcmAuCgorIFdlIG5lZWQgdG8gZGV0ZXJtaW5lIGhvdyBtYW55IG9mIGBwcm9kdWN0c2AgYXZhaWJhbGUgaW4gdGhpcyBkYXRhc2V0LgoKKyBXZSBuZWVkIHRvIGtub3cgaWYgaXMgdGhlcmUgbXVsdGlwbGUgcHJvZHVjdHMgdGhhdCBib3VnaHQgdG9nZXRoZXIgKGZvcm1pbmcgYSBiYXNrZXQgb3IgY291ZmZpbikgZm9yIGVhY2ggY29zdHVtZXIgYXQgYSB0aW1lLgoKIyBFeHBsb3JhdG9yeSBEYXRhIEFuYWx5c2lzCgojIE1hcmtldCBCYXNrZXQgQW5hbHlzaXMKVGhpcyBkYXRhc2V0IGdpdmVzIHVzIGEgZGF0YSBmb3IgYWxsIHRyYW5zYWN0aW9ucyB0aGF0IGNvbnNpc3RzIG9mIFByb2R1Y3RzIGJvdWdodCBpbiB0aGUgc3RvcmUgYnkgc2V2ZXJhbCBjdXN0b21lcnMgb3ZlciBhIHBlcmlvZCBvZiB0aW1lLgpUaGUgTWFya2V0IEJhc2tldCBBbmFseXNpcyAoTUJBKSB1c2VzIGBBc3NvY2lhdGlvbiBSdWxlYCBtaW5pbmcgb24gdGhlIGdpdmVuIHRyYW5zYWN0aW9uIGRhdGEuIFRoZSBnb2FsIGlzIHRvIHVzZSB0aGlzIGRhdGEgdG8gYm9vc3QgdGhlIGJ1c2luZXNzLiBUaGUgaWRlYSB0aGlzIHRvIGNoYW5nZSB0aGUgbGF5b3V0IG9mIHRoZSBwaHlzaWNhbCBzdG9yZSBvciByYXRoZXIgYW4gb25saW5lIHN0b3JlLiBGb3IgZXhhbXBsZSwgcHV0IHBhcnRpY3VsYXIgcHJvZHVjdCB3aXRoIGJhZCBzb2xkIHJhdGUgbmVhciB0byBhIHByb2R1Y3Qgd2l0aCBhIGdvb2QgcmF0ZSBvZiBzb2xkIHRvIGJvb3N0IHRoZSBidXNpbmVzcy4gCgoKCldoYXQgd2UgbmVlZCB0byBkbyBpcyB0byBncm91cCBkYXRhICBieSBgTWVtYmVyX251bWJlcmAsIGFuZCBgRGF0ZWAuIFdlIG5lZWQgdGhpcyBncm91cGluZyBhbmQgYXBwbHkgYSBmdW5jdGlvbiBvbiBpdCBhbmQgc3RvcmUgdGhlIG91dHB1dCBpbiBhbm90aGVyIGRhdGFmcmFtZS4gCgpUaGUgZm9sbG93aW5nIGxpbmVzIG9mIGNvZGUgd2lsbCBjb21iaW5lIGFsbCBwcm9kdWN0cyBmcm9tIG9uZSBgTWVtYmVyX251bWJlcmAgYW5kIGBEYXRlYCBhbmQgY29tYmluZSBhbGwgcHJvZHVjdHMgZnJvbSBvbmUgdHJhbnNhY3Rpb24gYXMgb25lIHJvdywgd2l0aCBlYWNoIHByb2R1Y3QsIHNlcGFyYXRlZCBieSBgLGAuCgpgYGB7cn0KbGlicmFyeShwbHlyKQoKdHJhbnNhY3Rpb25fbGlzdCA8LSBwbHlyOjpkZHBseShiYXNrZXQsYygiTWVtYmVyX251bWJlciIsIkRhdGUiKSwKICAgICAgICAgICAgICAgICAgICAgICBmdW5jdGlvbihkZjEpcGFzdGUoZGYxJGl0ZW1EZXNjcmlwdGlvbiwKICAgICAgICAgICAgICAgICAgICAgICBjb2xsYXBzZSA9ICIsIikpCmNvbG5hbWVzKHRyYW5zYWN0aW9uX2xpc3QpIDwtIGMoIk1lbWJlcl9udW1iZXIiLCJEYXRlIiwiQmFza2V0cyIpCnRyYW5zYWN0aW9uX2xpc3QKYGBgCgoKV2VsbCwgYXQgYWxsIHdlIGhhdmUgYDE0LDk2M2AgdHJhbnNhY3Rpb25zLiBFYWNoIHRyYW5zYWN0aW9uIGlzIGNvbXBvc2VkIGJ5IGEgc2V0IG9mIHByb2R1Y3RzIHZpZXdlZCBpbiB0aGUgY29sbXVuIGBCYXNrZXRzYC4gRWFjaCBhIHNldCBvZiBwcm9kdWN0cyBpcyBuYW1lZCBhIGBCYXNrZXRgIG9yIGBDb3VmZmluYC4KSW4gdGhlIGZvbGxvd2luZyBzdGVwcyB3ZSBuZWVkIG9ubHkgdGhlIGluZm9ybWF0aW9ucyBpbiBgQmFza2V0c2AgY29sdW1uLiBXZSB3aWxsIHNhdmUgaXQgaW4gYSBmaWxlIGFzIGNzdiBmb3JtYXQgKGNvbW1hIHNlcGFyYXRlIFZhbHVlcykuCgpgYGB7cn0KIyBCYWNrLVVwIHRoZSB0cmFuc2FjdGlvbiBMaXN0IHdpdGggTWVtYmVyIG51bWJlciBhbmQgRGF0ZXMuCnRyYW5zYWN0aW9uX2xpc3RfYmtwIDwtIHRyYW5zYWN0aW9uX2xpc3QKCiNzZXQgY29sdW1uIE1lbWJlcl9udW1iZXIgb2YgZGF0YWZyYW1lIHRyYW5zYWN0aW9uX2xpc3QgCnRyYW5zYWN0aW9uX2xpc3QkTWVtYmVyX251bWJlciA8LSBOVUxMCiNzZXQgY29sdW1uIERhdGUgb2YgZGF0YWZyYW1lIHRyYW5zYWN0aW9uX2xpc3QKdHJhbnNhY3Rpb25fbGlzdCREYXRlIDwtIE5VTEwKI1JlbmFtZSBjb2x1bW4gdG8gQmFza2V0cwpjb2xuYW1lcyh0cmFuc2FjdGlvbl9saXN0KSA8LSBjKCJCYXNrZXRzIikKI1Nob3cgRGF0YWZyYW1lIHRyYW5zYWN0aW9uRGF0YQp0cmFuc2FjdGlvbl9saXN0CmBgYAoKIyMgRGF0YSBNaW5pbmcgdXNpbmcgYGBgYXJ1bGVzYGBgIGFsZ29yaXRobWUKCmBgYHtyfQpsaWJyYXJ5KGFydWxlcykKIyBXcml0ZSB0aGUgQmFza2V0cyBsaXN0IHRvIGEgZmlsZQp3cml0ZS5jc3YodHJhbnNhY3Rpb25fbGlzdCwidHJhbnNhY3Rpb25zX2xpc3QuY3N2IiwgcXVvdGUgPSBGQUxTRSwgcm93Lm5hbWVzID0gVFJVRSkKIyBsb2FkIHRoZSBCYXNrZXRzIGxpc3QgYXMgYSBiYXNrZXQgZm9ybWF0IHVzaW5nIGFydWxlcyBwYWNrYWdlCnRyX2xpc3QgPC0gcmVhZC50cmFuc2FjdGlvbnMoJ3RyYW5zYWN0aW9uc19saXN0LmNzdicsIGZvcm1hdCA9ICdiYXNrZXQnLCBzZXA9JywnKQoKdHJfbGlzdApgYGAKCmBgYHtyfQpzdW1tYXJ5KHRyX2xpc3QpCmBgYAoKCisgVGhlcmUgYXJlIGAxNDk2NGAgdHJhbnNhY3Rpb25zIGFuZCBgMTUxMzFgIHNvbGQgcHJvZHVjdHMgKE9uZSBwcm9kdWN0IGNhbiBiZSBzb2xkIHNldmVyYWwgdGltZXMpLiBFYWNoIHRyYW5zYWN0aW9uIGlzIGEgY29sbGVjdGlvbiBvZiBwcm9kdWN0cy4KKyBUaGUgRGVuc2l0eSBpcyBgMC4wMDAyMzM5NDU1YCB0ZWxscyB0aGUgcGVyY2VudGFnZSBvZiBub24temVybyBjZWxscyBpbiBhIHNwYXJzZSBtYXRyaXguIEl0IGlzIHRoZSB0b3RhbCBudW1iZXIgb2YgcHJvZHVjdHMgdGhhdCBhcmUgcHVyY2hhc2VkIGRpdmlkZWQgYnkgYSBwb3NzaWJsZSBudW1iZXIgb2YgcHJvZHVjdHMgaW4gdGhlIG1hdHJpeC4KKyBUaGUgbXVsdGlwbGljYXRpb24gb2YgdGhlIHRocmVlIHZhbHVlcyBpcyB0aGUgdG90YWwgb2YgcHJvZHVjdHMgd2VyZSBwdXJjaGFzZWQuCgpgYGB7cn0Kcm91bmQoMTQ5NjQgKiAxNTEzMSAqIDAuMDAwMjMzOTQ1NSkKYGBgCisgVGhlIG1vc3QgZnJlcXVlbnQgcHJvZHVjdHMgYXJlICB3aG9sZSBtaWxrICgyMzYzKSwgb3RoZXIgdmVnZXRhYmxlcyAoMTgyNyksIHJvbGxzL2J1bnMgKDE2NDYpLCBzb2RhICgxNDUzKSwgeW9ndXJ0ICgxMjg1KSwgb3RoZXIgKDQ0Mzk2KQorIFRoZSBlbGVtZW50IGxlbmd0aCBkaXN0cmlidXRpb24gaXMgZm9ybXVsYXRlZCBhcyAgYG51bWJlciBvZiBwcm9kdWN0c2AgLyBgbnVtYmVyIG9mIHRyYW5zYWN0aW9uc2AuIEZvciBleGFtcGxlLCB0aGVyZSBhcmUgMjA1IHRyYW5zYWN0aW9ucyB3aXRoIG9ubHkgMiBwcm9kdWN0cywgYW5kIDI3MjcgdHJhbnNhY3Rpb25zIHdpdGggNCBwcm9kdWN0cy4gV2UgY2FuIGdldCBkaXJlY3RseSB0aGUgVGhlIGVsZW1lbnQgbGVuZ3RoIGRpc3RyaWJ1dGlvbiBieSBgYGBzdW1tYXJ5KHRyX2xpc3QpQGxlbmd0aHNgYGAuCgpgYGB7cn0Kc3VtbWFyeSh0cl9saXN0KUBsZW5ndGhzCmBgYAoKCiMjIFBsb3QgdGhlIG1vc3QgMTAgZnJlcXVlbnQgIHNvbGQgaXRlbXMKCmBgYHtyfQpsaWJyYXJ5KFJDb2xvckJyZXdlcikKI3BhcihtZnJvdz1jKDIsMSkpCmFydWxlczo6aXRlbUZyZXF1ZW5jeVBsb3QodHJfbGlzdCx0b3BOPTEwLHR5cGU9ImFic29sdXRlIixjb2w9YnJld2VyLnBhbCg4LCdQYXN0ZWwyJyksIG1haW49IkFic29sdXRlIFByb2R1Y3QgRnJlcXVlbmN5IFBsb3QiKQphcnVsZXM6Oml0ZW1GcmVxdWVuY3lQbG90KHRyX2xpc3QsdG9wTj0xMCx0eXBlPSJyZWxhdGl2ZSIsY29sPWJyZXdlci5wYWwoOCwnUGFzdGVsMicpLCBtYWluPSJSZWxhdGl2ZSBQcm9kdWN0IEZyZXF1ZW5jeSBQbG90IikKYGBgCgpUaGUgb3B0aW9uIGBhYnNvbHV0ZWAgcGxvdHMgbnVtZXJpYyBmcmVxdWVuY2llcyBvZiBlYWNoIHByb2R1Y3QgaW5kZXBlbmRlbnRseS4gVGhlIGByZWxhdGl2ZWAgb3B0aW9uIHBsb3RzIGhvdyBtYW55IHRpbWVzIHRoZXNlIHByb2R1Y3RzIGhhdmUgYXBwZWFyZWQgYXMgY29tcGFyZWQgdG8gb3RoZXJzLgoKKyBUaGVzZXMgcGxvdHMgc2hvd3MgdGhlIDEwIG1vc3Qgc29sZCBwcm9kdWN0cy4gV2UgY2FuIHZpZXcgbW9yZSBieSBjaGFuZ2luZyB0aGUgYXJndW1lbnQgYHRvcE5gLiAKCisgV2hvbGUgbWlsayBhbmQgT3RoZXIgdmVnZXRhYmxlcyBoYXZlIHRoZSBtb3N0IHNhbGVzLgoKKyBUbyBib29zdCB0aGUgYnVzaW5lc3Mgb2YgY2l0cnVzIGZydWl0LCB3ZSBuZWVkIGZvZSBleGFtcGxlIHRvIHB1dCBpdCBpbiB0aGUgd2F5IG9mIHRoZSB3aG9sZSBtaWxrIG9yIGluIHRoZSB3YXkgb2Ygb3RoZXIgdmVnZXRhYmxlcy4gCgoKIyMgQWx0ZXJuYXRpdmUgd2F5IHRvIGV4dHJhY3QgdGhlIG1vc3Qgc29sZCBpdGVtcwoKYGBge3IsIGVjaG8gPSBUUlVFfQpsaWJyYXJ5KGdncGxvdDIpCiMgSG93IG1hbnkgdHJhbnNhY3Rpb25zIGJ5IHByb2R1Y3QsIHRoZSBkYXRhIHdpbGwgYmUgYXJyYW5nZWQgYnkgZGVzY2VuZGluZwpiYXNrZXRfcGxvdF9wcm9kdWN0cyA8LSBiYXNrZXQgJT4lIGdyb3VwX2J5KGl0ZW1EZXNjcmlwdGlvbikgJT4lIGRwbHlyOjpzdW1tYXJpc2UoTl9vcGVyYXRpb25zPW4oKSkgJT4lIGFycmFuZ2UoZGVzYyhOX29wZXJhdGlvbnMpKQoKCiMjIHBsb3QgdGhlIGhpc3RvZ3JhbSBvZiB0aGUgYmVzdCA1MHRoIHNvbGQgIHByb2R1Y3RzCmdncGxvdDI6OmdncGxvdChiYXNrZXRfcGxvdF9wcm9kdWN0c1sxOjEwLF0sIGFlcyh4ID0gcmVvcmRlcihpdGVtRGVzY3JpcHRpb24sIC1OX29wZXJhdGlvbnMpLCB5ID0gTl9vcGVyYXRpb25zKSkgKyAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjYWVzX3N0cmluZyh4ID0gJ2l0ZW1EZXNjcmlwdGlvbicsICB5ID0gJ05fb3BlcmF0aW9ucycpICAjIyB3aXRob3V0IG9yZGVyaW5nCiBnZ3Bsb3QyOjpsYWJzKHRpdGxlID0gIk92ZXJ2aWV3IG9mIHRoZSBmaXJzdCAxMHRoIGJlc3Qgc29sZHMgcHJvZHVjdHMgZHVyaW5nIDIwMTQtMjAxNSIsCiAgICAgICAgICAgICAgICNmaWxsID0gIiIsCiAgICAgICAgICAgICAgIHg9ICJUaGUgcHJvZHVjdHMiLAogICAgICAgICAgICAgICNjb2xvdXI9IERhdGUsCiAgICAgICAgICAgICAgIHkgPSAiVGhlIG51bWJlciBvZiBzYWxlcyBieSBwcm9kdWN0IikgKyAgICAKICAgICAgZ2dwbG90Mjo6dGhlbWUobGVnZW5kLnRpdGxlID0gZWxlbWVudF90ZXh0KCBjb2xvdXI9ImJsYWNrIiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc2l6ZT0xMSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmFjZT0iYm9sZCIpLAogICAgICAgICAgICAgICAgICAgdGl0bGUgPSBlbGVtZW50X3RleHQoIHNpemUgPSAxMiwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmYWNlID0gJ2JvbGQnCiAgICAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgICAgdGV4dCA9IGVsZW1lbnRfdGV4dChzaXplID0gMTAsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZhY2U9ICdib2xkJwogICAgICAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICAgICAgIGF4aXMudGV4dC54PWVsZW1lbnRfdGV4dChhbmdsZT00NSwgaGp1c3Q9MSksCiAgICAgICAgICAgICAgICAgICBsZWdlbmQucG9zaXRpb24gPSAicmlnaHQiLAogICAgICAgICAgICAgICAgICAgbGVnZW5kLmRpcmVjdGlvbiA9ICJ2ZXJ0aWNhbCIKICAgICkgKwogZ2dwbG90Mjo6Z2VvbV9iYXIoc3RhdD0iaWRlbnRpdHkiLCBuYS5ybT1UUlVFKQoKCmBgYAoKIyMgQXBwbGxpbmcgb2YgQVBSSU9SSSBhbGdvcml0aG1lIAoKVGhlIG5leHQgc3RlcCBpcyB0byBtaW5lIHRoZSBydWxlcyB1c2luZyB0aGUgQVBSSU9SSSBhbGdvcml0aG0uIFRoZSBmdW5jdGlvbiBgYGBhcHJpb3JpKClgYGAgaXMgZnJvbSBgYXJ1bGVzYCBwYWNrYWdlLgpXZSBjYW4gc2V0IGFuZCBvcHRpbWl6ZSB0aGUgcGFyYW10ZXIgb2YgdGhlIGBtaW5pbXVtIHN1cHBvcnRgIG9mIDAuMDAwMSwgdGhlIGBtaW5pbXVtIGNvbmZpZGVuY2VgIG9mIDAuOCwgbWF4aW11bSBvZiAxMCBgcHJvZHVjdHNgIChtYXhsZW4pLgoKYGBge3J9CiNNaW4gU3VwcG9ydCBhcyAwLjAwMDEsIGNvbmZpZGVuY2UgYXMgMC44IGFuZCBtYXhpbXVtIG9mIDEwIHByb2R1Y3RzLgphc3NvY2lhdGlvbi5ydWxlcyA8LSBhcnVsZXM6OmFwcmlvcmkodHJfbGlzdCwgcGFyYW1ldGVyID0gbGlzdChzdXBwPTAuMDAwMSwgY29uZj0wLjgpKSAgIywgbWF4bGVuPTEwCgpgYGAKCioqRGVmaW5pdGlvbioqCgorIEl0ZW1zZXQ6IENvbGxlY3Rpb24gb2Ygb25lIG9yIG1vcmUgaXRlbXMuIEstaXRlbS1zZXQgbWVhbnMgYSBzZXQgb2YgayBpdGVtcy4KCisgU3VwcG9ydCBDb3VudDogRnJlcXVlbmN5IG9mIG9jY3VycmVuY2Ugb2YgYW4gaXRlbS1zZXQKCisgU3VwcG9ydChzKTogRnJhY3Rpb24gb2YgdHJhbnNhY3Rpb25zIHRoYXQgY29udGFpbiB0aGUgaXRlbS1zZXQKCiMjIFN1bW1hcnkgb2YgdGhlIGFzc29jaWF0ZWQgcnVsZXMKICAgIApgYGB7cn0KIyBzdW1tYXJ5IHJ1bGVzIG9mIG1pbiBTdXBwb3J0IGFzIDAuMDAwMSwgY29uZmlkZW5jZSBhcyAwLjggYW5kIG1heGltdW0gb2YgMTAgcHJvZHVjdHMuCnN1bW1hcnkoYXNzb2NpYXRpb24ucnVsZXMpCmBgYAoKKyBUaGUgdG90YWwgbnVtYmVyIG9mIHJ1bGVzIGlzOiAqKjY0NyoqCgorIERpc3RyaWJ1dGlvbiBvZiBydWxlIGxlbmd0aDogQSBsZW5ndGggb2YgNCBpdGVtcyBoYXMgdGhlIG1vc3QgcnVsZXM6ICoqNDM4KiogYW5kIGEgbGVuZ3RoIG9mICoqNSoqIGl0ZW1zIGhhdmUgdGhlIGxvd2VzdCBudW1iZXIgb2YgcnVsZXM6ICoqNzQqKi4KCiMjIEluc3BlY3QgdGhlIHRvcCAxMCBydWxlcwoKYGBge3J9Cmluc3BlY3QoYXNzb2NpYXRpb24ucnVsZXNbMToxMF0pCmBgYAoKKipJbnRlcnByZXRhdGlvbioqCgorIDEwMCUgb2YgdGhlIGN1c3RvbWVycyB3aG8gYm91Z2h0ICdkb21lc3RpYyBlZ2dzLHJ1YmJpbmcgYWxjb2hvbCcgYWxzbyBib3VnaHQgJ3JhbmtmdXJ0ZXInLgoKKyAxMDAlIG9mIHRoZSBjdXN0b21lcnMgd2hvIGJvdWdodCAncHJvc2VjY28sd2FmZmxlcycgYWxzbyBib3VnaHQgJ3NhdXNhZ2UnLgoKIyMgRXh0cmFjdCBydWxlcyBmcm9tIGdpdmVuIHByb2R1Y3RzCkZvciBleGFtcGxlLCB3ZSB3b3VsZCBsaWtlIHRvIGtub3cgd2hhdCBjb3N0dW1lciBidXkgYmVmb3JlIGJ1eWluZyBgY2FubmVkIGJlZXJgLgoKYGBge3J9CmJlZXIuYXNzb2NpYXRpb24ucnVsZXMgPC0gYXByaW9yaSh0cl9saXN0LCBwYXJhbWV0ZXIgPSBsaXN0KHN1cHA9MC4wMDAxLCBjb25mPTAuOCksYXBwZWFyYW5jZSA9IGxpc3QoZGVmYXVsdD0ibGhzIixyaHM9ImNhbm5lZCBiZWVyIikpCmBgYAoKIyMgSW5zcGVjdCB0aGUgdG9wIDEwIHJ1bGVzCgpgYGB7cn0KIyBsaHM9IGNhbm5lZCBiZWVyIGJlY2F1c2UgeW91IHdhbnQgdG8gZmluZCBvdXQgdGhlIHByb2JhYmlsaXR5IG9mIHRoYXQgaW4gaG93IG1hbnkgY3VzdG9tZXJzIGJ1eSBjYW5uZWQgYmVlciBhbG9uZyB3aXRoIG90aGVyIGl0ZW1zCmluc3BlY3QoaGVhZChiZWVyLmFzc29jaWF0aW9uLnJ1bGVzKSkKYGBgCioqSW50ZXJwcmV0YXRpb24qKgoKKyBDYW5uZWQgYmVlciAoKipSSFMqKikgd2FzIEJvdWdodCBhZnRlciBhbGwgc3ViLWJhc2tldHMgKHdpdGggdHdvIGl0ZW1zKSBpbiB0aGUgKipMSFMqKiBjb2x1bW4uCgojIFZpc3VhbGl6aW5nIEFzc29jaWF0aW9uIFJ1bGVzCgpBIHN0cmFpZ2h0LWZvcndhcmQgdmlzdWFsaXphdGlvbiBvZiBhc3NvY2lhdGlvbiBydWxlcyBpcyB0byB1c2UgYSBzY2F0dGVyIHBsb3QgdXNpbmcgcGxvdCgpIG9mIHRoZSBgYXJ1bGVzVml6YCBwYWNrYWdlLgpJdCB1c2VzIGBTdXBwb3J0YCBhbmQgYENvbmZpZGVuY2VgIG9uIHRoZSBheGVzLgoKIyBWaXN1YWxpemUgdGhlIHJ1bGVzCgojIyBzY2F0dGVyIHBsb3Qgd2l0aCA2NDcgcnVsZXMKYGBge3J9CmxpYnJhcnkoYXJ1bGVzVml6KQojIEZpbHRlciBydWxlcyB3aXRoIGNvbmZpZGVuY2UgZ3JlYXRlciB0aGFuIDAuNCBvciA0MCUKc3ViUnVsZXM8LWFzc29jaWF0aW9uLnJ1bGVzW3F1YWxpdHkoYXNzb2NpYXRpb24ucnVsZXMpJGNvbmZpZGVuY2U+MC40XQojUGxvdCBTdWJSdWxlcwpwbG90KHN1YlJ1bGVzKQpgYGAKClRoZSBhYm92ZSBwbG90IHNob3dzIHRoYXQgcnVsZXMgd2l0aCBoaWdoIGxpZnQgaGF2ZSBsb3cgc3VwcG9ydC4gWW91IGNhbiB1c2UgdGhlIGZvbGxvd2luZyBvcHRpb25zOgoKIyMgVHdvLWtleSBQbG90CgpgYGB7cn0KcGxvdChzdWJSdWxlcyxtZXRob2Q9InR3by1rZXkgcGxvdCIpCmBgYAorIFRoZSB0d28ta2V5IHBsb3QgdXNlcyBzdXBwb3J0IGFuZCBjb25maWRlbmNlIG9uIHggYW5kIHktYXhpcyByZXNwZWN0aXZlbHkuIAoKKyBJdCB1c2VzIG9yZGVyIGZvciBjb2xvcmluZy4gVGhlIG9yZGVyIGlzIHRoZSBudW1iZXIgb2YgcHJvZHVjdHMgaW4gdGhlIHJ1bGUuCgojIyAgSW50ZXJhY3RpdmUgdmlzdWFsaXNhdGlvbiBvZiB0aGUgUnVsZXMKCmBgYHtyfQojdG9wMTBzdWJSdWxlcyA8LSBoZWFkKHN1YlJ1bGVzLCBuID0gMTAsIGJ5ID0gImNvbmZpZGVuY2UiKQpwbG90KHN1YlJ1bGVzWzE6MjBdLCBtZXRob2QgPSAiZ3JhcGgiLCAgZW5naW5lID0gImh0bWx3aWRnZXQiLCBjb250cm9sID0gbGlzdCh0eXBlID0gIml0ZW1zIikpCmBgYApUaGUgQXJyb3dzIHBvaW50aW5nIGZyb20gcHJvZHVjdHMgdG8gcnVsZSB2ZXJ0aWNlcyBpbmRpY2F0ZSBgTEhTYCBwcm9kdWN0cyBhbmQgYW4gYXJyb3cgZnJvbSBhIHJ1bGUgdG8gYW4gcHJvZHVjdCBpbmRpY2F0ZXMgdGhlIGBSSFNgLgoKKipJbnRlcnByZXR0YWlvbioqCisgVGhlIGdyYXBoIHNob3dzIHRhaHQgYWxsIHJ1bGVzIG9yIGl0aW5lcmFyaWVzIGZvY3VzIG9yIGB3aG9tZSBtaWxrYCBhbmQgYFZlZ2V0YWJsZXNgLgoKKyBUaGUgZ3JhcGggc2hvd3MgYWxzbyB0aGUgcGVvcGxlIHdobyBidXkgYHRlYWAgYW5kIGBmcm96ZW5zIHZlZ2V0YWJsZXNgIGFsc28gYnV5IGBjYXQgZm9vZGAuIFdlIHNob3VsZCBwbGFjZSB0aGVzZSBpbiBhbiBhaXNsZSB0b2dldGhlci4KCiMgSW5kaXZpZHVhbCBSdWxlIFJlcHJlc2VudGF0aW9uCgpUaGUgYFBhcmFsbGVsIENvb3JkaW5hdGVzIFBsb3RgICBpcyB1c2VmdWwgdG8gdmlzdWFsaXplZCB3aGljaCBwcm9kdWN0cyBhbG9uZyB3aXRoIHdoaWNoIGl0ZW1zIGNhdXNlIHdoYXQga2luZCBvZiBzYWxlcy4KCmBgYHtyfQojIEZpbHRlciB0b3AgMTAgcnVsZXMgd2l0aCBoaWdoZXN0IGxpZnQKI3N1YlJ1bGVzMjwtaGVhZChzdWJSdWxlcywgbj0xNiwgYnk9ImxpZnQiKQpwbG90KHN1YlJ1bGVzWzE6MTBdLCBtZXRob2Q9InBhcmFjb29yZCIsIGNvbnRyb2wgPSBsaXN0KHJlb3JkZXIgPSBUUlVFKSkKYGBgCgoqKkludGVycHJldGF0aW9uKioKCisgVGhlIHBsb3Qgc2hvd3MgdGhlIGl0aW5lcmFyeSB1c2VkIGJ5IHRoZSBjb3N0dW1lcnMgZHVyaW5nIHRoZSBzaG9wcGluZy4KCisgVGhlIHRvcCAxMCBydWxlcyBzaG93IHVzIHRoYXQgd2hlbiBjb3N0dW1lcnMgaGF2ZSBgd2hvbGUgbWlsa2AgYW5kIGBzb2FwYCwgIEl0IHdpbGwgYmUgIGhpZ2hseSBsaWtlbHkgdGhhdCB0aGV5IGJ1eSBgdHJvcGljYWwgZnJ1aXRgLgoKKyBUaGUgYHdob2xlIG1pbGtgIGlzIGxvY2F0ZWQgYXQgdGhlIGZpcnN0IHBvc2l0aW9uLiBUaGlzIG1lYW5zIHRoYXQgdGhlcmUgaXMgbm8gcnVsZSB0byBidXkgaXQuIE9yIEl0IGlzIHdlbGwgZXhwbG9zZWQgZm9yIGN1c3RvbWVycy4KCisgRWFjaCBhcnJvdyBjb3JyZXNwb25kcyB0byBhIHJ1bGUuCgoKIyBDb25jbHVzaW9uCgorIFRoZSB2aXN1YWxpemluZyBncmFwaHMgYW5kIHJ1bGVzLCBpdCBpcyBwb3NzaWJsZSB0byBtYWtlIGRlY2lzaW9ucyBmb3IgdGhlIHBvc2l0aW9uaW5nIG9mIGl0ZW1zIGluIHRoZSBzdXBlcm1hcmtldC4KCisgTm93LCB3ZSB3b3VsZCBwbGFjZSBgV2hvbGUgTWlsa2AgYW5kIGBWZWdldGFibGVzYCBiZXNpZGUgZWFjaCBvdGhlcjsgYHRlYWAgYW5kIGBmcm96ZW5zIHZlZ2V0YWJsZXNgIGFsc28gYnV5IGBjYXQgZm9vZGAgYWxvbmcgc2lkZSB0b28uCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAiQmFza2V0IERhdGFzZXQgQW5hbHlzaXMgUmVwb3J0IgphdXRob3I6ICJLYXJpbSBNZXpob3VkIgpkYXRlOiAiMTIvMTcvMjAxOCIKb3V0cHV0OgogIGh0bWxfZG9jdW1lbnQ6CiAgICBkZl9wcmludDogcGFnZWQKICBodG1sX25vdGVib29rOiBkZWZhdWx0CiAgcGRmX2RvY3VtZW50OiBkZWZhdWx0CiAgd29yZF9kb2N1bWVudDogZGVmYXVsdAotLS0KIyBCb29zdCBCdXNpbmVzcyBvZiByZXRhaWwgc3VwZXJtYXJrZXQKVGhlIGdvYWwgb2YgdGhpcyBleGVyY2ljZSBpcyB0byBkZWNpcGhlciByZWxldmFudCBrbm93bGVkZ2VzIGZyb20gQmFza2V0cyBEYXRhU2V0IGFuZCBib29zdCB0aGUgYnVzaW5lc3MgYnkgcHJvc2l0aW9ubmluZyBwcm9kdWN0cyAoaXRlbXMpLgoKYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9CiMgTG9hZCBkYXRhc2V0IGZyb20gdXJsCmJhc2tldCA8LSByZWFkLmNzdigiaHR0cDovL3d3dy5ldm9kZXZvLml0L3dwLWNvbnRlbnQvdXBsb2Fkcy8yMDE4LzEyL2Jhc2tldC5jc3YiKQojIEJhY2t1cCB0aGUgZGF0YXNldAojd3JpdGUuY3N2KGJhc2tldCwgZmlsZSA9ICJiYXNrZXRfYmtwLmNzdiIpCmJhc2tldApgYGAKCmBgYHtyfQojIGdldCB0aGUgc3RydWN0dXJlIG9mIHRoZSBkYXRhc2V0CnN0cihiYXNrZXQpCmBgYAoKCiMgRGF0YSBQcmUtcHJvY2Vzc2luZwoKVGhlIGRhdGFzZXQgaXMgYSBkYXRhZnJhbWUgd2l0aCAzIGNvbHVtbnM6IE1lbWJlcl9udW1iZXIsIERhdGUsIGFuZCBQcm9kdWN0cyBkZXNjcmlwdGlvbi4KVGhlIGBNZW1iZXJfbnVtYmVyYCBjb2x1bW4gbXVzdCBiZSBjb25zaWRlcmVkIGFzIGZhY3RvciwgbGlrZSB0aGUgaWQgb2YgbWVtYmVyLgpUaGUgYERhdGVgIG11c3QgYmUgYSBkYXRlIHR5cGUuClRoZSBgaXRlbURhc2NyaXB0aW9uYCBpcyBhbHJlYWR5IGFzLmZhY3RvcgoKIyMgY29udmVydCB0aGUgdHlwZSBvZiB2YXJpYWJsZXMKCmBgYHtyfQpsaWJyYXJ5KG1hZ3JpdHRyKQpsaWJyYXJ5KGRwbHlyKQpsaWJyYXJ5KHRpYmJsZSkKCmJhc2tldCRNZW1iZXJfbnVtYmVyIDwtIGFzLmZhY3RvcihiYXNrZXQkTWVtYmVyX251bWJlcikKYmFza2V0JERhdGUgPC0gYXMuRGF0ZShiYXNrZXQkRGF0ZSwgIiVkLSVtLSVZIikKIyBJbiB0aGUgY2FzZSBpZiB3ZSBoYXZlIHRoZSB0cmFuc2FjdGlvbiBkYXRlIGFzIDIwMTAtMTItMDEgMDg6MjY6MDAKIyBXZSBjYW4gZXh0cmFjdCB0aW1lIGZyb20gdGhlIGNvbHVtbiBhbmQgc3RvcmUgaW4gYW5vdGhlciB2YXJpYWJsZToKIyBUcmFuc1RpbWU8LSBmb3JtYXQoYmFza2V0JERhdGUsIiVIOiVNOiVTIikKIyBUaGlzIGxpbmUgY3JlYXRlIGFuIG90aGVyIGNvbHVtbiB3aXRoIERhdGUgWU1ELgoKIyBjb252ZXJ0IHRoZSBkYXRhZnJhbWUgYXMgYSB0aWJibGUKYmFza2V0IDwtIHRpYmJsZTo6YXMudGliYmxlKGJhc2tldCkKCiMgcmV2aWV3IHRoZSBzdHJ1Y3R1cmUgYW5kIHN1bW1hcnkKc3RyKGJhc2tldCkKc3VtbWFyeShiYXNrZXQpCmJhc2tldApgYGAKCk5vdyBpcyBiZXR0ZXIgZm9ybWF0ZWQuIFdlIGNhbiBvYnNlcnZlOgorIFRoZSBNZW1iZXJfbnVtYmVyIGAzMTgwYCBoYXMgdGhlIGJpZ2dlc3QgdHJhbnNhY3Rpb25zICgzNikuIAorIFRoZSBgV2hvbGUgbWlsa2AgaXMgdGhlIG1vc3Qgc29sZCB3aXRoIDI1MDIgdHJhbnNhY3Rpb25zLgorIFRoZSBzYW1wbGluZyBkYXRhIHdhcyBkb25lIGR1cmluZyB0d28geWVhcnMsIGJldHdlZW4gMjAxNC0wMS0wMSBhbmQgMjAxNS0xMi0zMC4KCkJlZm9yZSB0byBzdGFydCB0aGUgZXhwbG9yYXRpb24sIEl0IGlzIGltcG9ydGFudCB0byBjaGVjayBpZiB0aGUgZGF0YXNldCBjb3VudGFpbiBlbXB0eSBjZWxscyBvciBub24gYXZhaWxhYmxlIGRhdGEuCgojIyBjaGVjayBmb3IgYW55IGVtcHR5IG9yIE5BIGNlbGwKCmBgYHtyfQojIENrZWNrIGZvciBOb24gQXZhaWxhYmxlIChOQSkgY2VsbAphbGwoaXMubmEoYmFza2V0KSkKIyBGQUxTRQojIG90aGVyd2lzZSB3ZSBjYW4gIHVzZSAjY29tcGxldGUuY2FzZXMoZGF0YSkgd2lsbCByZXR1cm4gYSBsb2dpY2FsIHZlY3RvciBpbmRpY2F0aW5nIHdoaWNoIHJvd3MgaGF2ZSBubyBtaXNzaW5nIHZhbHVlcy4gCiNUaGVuIHVzZSB0aGUgdmVjdG9yIHRvIGdldCBvbmx5IHJvd3MgdGhhdCBhcmUgY29tcGxldGUgdXNpbmcgYmFza2V0WyxdLgpiYXNrZXQgPC0gYmFza2V0W2NvbXBsZXRlLmNhc2VzKGJhc2tldCksIF0KCmJhc2tldApgYGAKCgpgYGB7cn0KIyBnZXQgYSBnbGltcHNlIG9mIHRoZSBkYXRhCnRpYmJsZTo6Z2xpbXBzZShiYXNrZXQpCmBgYAoKCgojIENvbnRleHQgb2YgdGhpcyBkYXRhc2V0ClRoZSBkYXRhc2V0IGhhcyB0aHJlZSB2YXJpYWJsZXMgdGhhdCBkZXNjcmliZSB0aGUgYHRyYW5zYWN0aW9uYCBvZiBtdWx0aXBsZSBgY29zdHVtZXJzYCB0aGF0IGJvdWdodCBtdXRpcGxlIGBpdGVtc2AgcmVjdXJyZW50bHkgIGR1cmluZyAyIHllYXJzLgoKKyBXZSBuZWVkIHRvIGRldGVybWluZSBob3cgbWFueSAgYGNvc3R1bWVyYC4KCisgV2UgbmVlZCB0byBkZXRlcm1pbmUgaG93IG1hbnkgYGl0ZW1zYCBhdmFpbGFibGUgaW4gdGhpcyBkYXRhc2V0LgoKKyBXZSBuZWVkIHRvIGtub3cgaWYgaXMgdGhlcmUgbXVsdGlwbGUgaXRlbXMgdGhhdCBwdXJjaGFzZWQgdG9nZXRoZXIgKGZvcm1pbmcgYSBiYXNrZXQgb3IgY291ZmZpbikgZm9yIGVhY2ggY29zdHVtZXIuCgojIEV4cGxvcmF0b3J5IERhdGEgQW5hbHlzaXMKClBsZWFzZSwgZm9sbG93IHRoaXMgbGluayB0byB0aGUgW0RyYWZ0aW5nXShodHRwczovL2ttZXpob3VkLmdpdGh1Yi5pby9iYXNrZXQvRHJhZnRpbmcvKSBzZWN0aW9uLgoKCiMgTWFya2V0IEJhc2tldCBBbmFseXNpcwpUaGlzIGRhdGFzZXRkZXNjcmliZXMgdGhlIHRyYW5zYWN0aW9ucyBkb25lIGluIHN1cGVybWFya2V0IGR1cmluZyB0d28geWVhcnMuIApUaGUgTWFya2V0IEJhc2tldCBBbmFseXNpcyAoTUJBKSB1c2VzIGBBc3NvY2lhdGlvbiBSdWxlYCAgdG8gZXh0cmFjdCBrbm93bGVkZ2UgYWJvdXQgdGhlIGl0ZW1zLCBhbmQgY29zdHVtZXJzLiAKVGhlIGdvYWwgb2YgdGhpcyBleGVyY2ljZSBpcyB0byB1c2UgdGhpcyBkYXRhIHRvIGJvb3N0IHRoZSBidXNpbmVzcy4gVGhlIGlkZWEgaXMgdG8gY2hhbmdlIGZvciBleGFtcGxlIHRoZSBsYXlvdXQgb2YgdGhlIHBoeXNpY2FsIHN0b3JlIG9yIHJhdGhlciBhbiBvbmxpbmUgc3RvcmUuIEZvciBleGFtcGxlLCBwdXQgcGFydGljdWxhciBwcm9kdWN0IHdpdGggYmFkIHNvbGQgcmF0ZSBuZWFyIHRvIGEgcHJvZHVjdCB3aXRoIGEgZ29vZCByYXRlIG9mIHNvbGQgdG8gYm9vc3QgdGhlIGJ1c2luZXNzLiAKCgpXaGF0IHdlIG5lZWQgdG8gZG8gaXMgdG8gZ3JvdXAgZGF0YSAgYnkgYE1lbWJlcl9udW1iZXJgLCBhbmQgYERhdGVgLiBXZSBuZWVkIHRoaXMgZ3JvdXBpbmcgYW5kIGFwcGx5IGEgZnVuY3Rpb24gb24gaXQgYW5kIHN0b3JlIHRoZSBvdXRwdXQgaW4gYW5vdGhlciBkYXRhZnJhbWUuIAoKVGhlIGZvbGxvd2luZyBsaW5lcyBvZiBjb2RlIHdpbGwgY29tYmluZSBhbGwgaXRlbXMgZnJvbSBvbmUgYE1lbWJlcl9udW1iZXJgIGFuZCBgRGF0ZWAgYW5kIGNvbWJpbmUgYWxsIGl0ZW1zIGZyb20gb25lIHRyYW5zYWN0aW9uIGFzIG9uZSByb3csIHdpdGggZWFjaCBpdGVtLCBzZXBhcmF0ZWQgYnkgYCxgLgoKYGBge3J9CmxpYnJhcnkocGx5cikKCnRyYW5zYWN0aW9uX2xpc3QgPC0gcGx5cjo6ZGRwbHkoYmFza2V0LGMoIk1lbWJlcl9udW1iZXIiLCJEYXRlIiksCiAgICAgICAgICAgICAgICAgICAgICAgZnVuY3Rpb24oZGYxKXBhc3RlKGRmMSRpdGVtRGVzY3JpcHRpb24sCiAgICAgICAgICAgICAgICAgICAgICAgY29sbGFwc2UgPSAiLCIpKQpjb2xuYW1lcyh0cmFuc2FjdGlvbl9saXN0KSA8LSBjKCJNZW1iZXJfbnVtYmVyIiwiRGF0ZSIsIkJhc2tldHMiKQp0cmFuc2FjdGlvbl9saXN0CmBgYAoKCldlbGwsIGF0IGFsbCB3ZSBoYXZlIGAxNCw5NjNgIHRyYW5zYWN0aW9ucy4gRWFjaCB0cmFuc2FjdGlvbiBpcyBjb21wb3NlZCBieSBhIHNldCBvZiBpdGVtcyB2aWV3ZWQgaW4gdGhlIGNvbHVtbiBgQmFza2V0c2AuIEVhY2ggc2V0IG9mIGl0ZW1zIGlzIG5hbWVkIGEgYEJhc2tldGAgb3IgYENvdWZmaW5gLgpJbiB0aGUgZm9sbG93aW5nIHN0ZXBzIHdlIG5lZWQgb25seSB0aGUgaW5mb3JtYXRpb25zIGluIGBCYXNrZXRzYCBjb2x1bW4uIFdlIHdpbGwgc2F2ZSBpdCBpbiBhIGZpbGUgYXMgY3N2IGZvcm1hdCAoY29tbWEgc2VwYXJhdGUgVmFsdWVzKS4KCmBgYHtyfQojIEJhY2stVXAgdGhlIHRyYW5zYWN0aW9uIExpc3Qgd2l0aCBNZW1iZXIgbnVtYmVyIGFuZCBEYXRlcy4KdHJhbnNhY3Rpb25fbGlzdF9ia3AgPC0gdHJhbnNhY3Rpb25fbGlzdAoKI3NldCBjb2x1bW4gTWVtYmVyX251bWJlciBvZiBkYXRhZnJhbWUgdHJhbnNhY3Rpb25fbGlzdCAKdHJhbnNhY3Rpb25fbGlzdCRNZW1iZXJfbnVtYmVyIDwtIE5VTEwKI3NldCBjb2x1bW4gRGF0ZSBvZiBkYXRhZnJhbWUgdHJhbnNhY3Rpb25fbGlzdAp0cmFuc2FjdGlvbl9saXN0JERhdGUgPC0gTlVMTAojUmVuYW1lIGNvbHVtbiB0byBCYXNrZXRzCmNvbG5hbWVzKHRyYW5zYWN0aW9uX2xpc3QpIDwtIGMoIkJhc2tldHMiKQojU2hvdyBEYXRhZnJhbWUgdHJhbnNhY3Rpb25EYXRhCnRyYW5zYWN0aW9uX2xpc3QKYGBgCgojIyBEYXRhIE1pbmluZyB1c2luZyBgYGBhcnVsZXNgYGAgYWxnb3JpdGhtZQoKYGBge3J9CmxpYnJhcnkoYXJ1bGVzKQojIFdyaXRlIHRoZSBCYXNrZXRzIGxpc3QgdG8gYSBmaWxlCndyaXRlLmNzdih0cmFuc2FjdGlvbl9saXN0LCJ0cmFuc2FjdGlvbnNfbGlzdC5jc3YiLCBxdW90ZSA9IEZBTFNFLCByb3cubmFtZXMgPSBUUlVFKQojIGxvYWQgdGhlIEJhc2tldHMgbGlzdCBhcyBhIGJhc2tldCBmb3JtYXQgdXNpbmcgYXJ1bGVzIHBhY2thZ2UKdHJfbGlzdCA8LSByZWFkLnRyYW5zYWN0aW9ucygndHJhbnNhY3Rpb25zX2xpc3QuY3N2JywgZm9ybWF0ID0gJ2Jhc2tldCcsIHNlcD0nLCcpCgp0cl9saXN0CmBgYAoKYGBge3J9CnN1bW1hcnkodHJfbGlzdCkKYGBgCgoKKyBUaGVyZSBhcmUgYDE0OTY0YCB0cmFuc2FjdGlvbnMgYW5kIGAxNTEzMWAgcHVyY2hhc2VkIGl0ZW1zIChPbmUgaXRlbSBjYW4gYmUgcHVyY2hhc2VkIG11bHRpcGxlIHRpbWVzKS4gRWFjaCB0cmFuc2FjdGlvbiBpcyBhIGNvbGxlY3Rpb24gb2YgaXRlbXMuCgorIFRoZSBEZW5zaXR5IGlzIGAwLjAwMDIzMzk0NTVgIHRlbGxzIHRoZSBwZXJjZW50YWdlIG9mIG5vbi16ZXJvIGNlbGxzIGluIGEgc3BhcnNlIG1hdHJpeC4gSXQgaXMgdGhlIHRvdGFsIG51bWJlciBvZiBpdGVtcyB0aGF0IGFyZSBwdXJjaGFzZWQgYW5kIGRpdmlkZWQgYnkgYSBwb3NzaWJsZSBudW1iZXIgb2YgaXRlbXMgaW4gdGhlIG1hdHJpeC4KCisgVGhlIG11bHRpcGxpY2F0aW9uIG9mIHRoZSB0aHJlZSB2YWx1ZXMgaXMgdGhlIHRvdGFsIG9mIHByb2R1Y3RzIHdlcmUgcHVyY2hhc2VkLgoKYGBge3J9CnJvdW5kKDE0OTY0ICogMTUxMzEgKiAwLjAwMDIzMzk0NTUpCmBgYAoKKyBUaGUgbW9zdCBmcmVxdWVudCBpdGVtcyBhcmUgIHdob2xlIG1pbGsgKDIzNjMpLCBvdGhlciB2ZWdldGFibGVzICgxODI3KSwgcm9sbHMvYnVucyAoMTY0NiksIHNvZGEgKDE0NTMpLCB5b2d1cnQgKDEyODUpLCBvdGhlciAoNDQzOTYpCgorIFRoZSBlbGVtZW50IGxlbmd0aCBkaXN0cmlidXRpb24gaXMgZm9ybXVsYXRlZCBhcyAgYG51bWJlciBvZiBwcm9kdWN0c2AgLyBgbnVtYmVyIG9mIHRyYW5zYWN0aW9uc2AuIEZvciBleGFtcGxlLCB0aGVyZSBhcmUgMjA1IHRyYW5zYWN0aW9ucyB3aXRoIG9ubHkgMiBpdGVtcywgYW5kIDI3MjcgdHJhbnNhY3Rpb25zIHdpdGggNCBpdGVtcy4gV2UgY2FuIGdldCBkaXJlY3RseSB0aGUgZWxlbWVudCBsZW5ndGggZGlzdHJpYnV0aW9uIGJ5IGBgYHN1bW1hcnkodHJfbGlzdClAbGVuZ3Roc2BgYC4KCmBgYHtyfQpzdW1tYXJ5KHRyX2xpc3QpQGxlbmd0aHMKYGBgCgoKIyMgUGxvdCB0aGUgbW9zdCAxMCBmcmVxdWVudCAgcHVyY2hhc2VkIGl0ZW1zCgpgYGB7cn0KbGlicmFyeShSQ29sb3JCcmV3ZXIpCiNwYXIobWZyb3c9YygyLDEpKQphcnVsZXM6Oml0ZW1GcmVxdWVuY3lQbG90KHRyX2xpc3QsdG9wTj0xMCx0eXBlPSJhYnNvbHV0ZSIsY29sPWJyZXdlci5wYWwoOCwnUGFzdGVsMicpLCBtYWluPSJBYnNvbHV0ZSBQcm9kdWN0IEZyZXF1ZW5jeSBQbG90IikKYXJ1bGVzOjppdGVtRnJlcXVlbmN5UGxvdCh0cl9saXN0LHRvcE49MTAsdHlwZT0icmVsYXRpdmUiLGNvbD1icmV3ZXIucGFsKDgsJ1Bhc3RlbDInKSwgbWFpbj0iUmVsYXRpdmUgUHJvZHVjdCBGcmVxdWVuY3kgUGxvdCIpCmBgYAoKVGhlIG9wdGlvbiBgYWJzb2x1dGVgIHBsb3RzIG51bWVyaWMgZnJlcXVlbmNpZXMgb2YgZWFjaCBpdGVtIGluZGVwZW5kZW50bHkuIFRoZSBgcmVsYXRpdmVgIG9wdGlvbiBwbG90cyBob3cgbWFueSB0aW1lcyB0aGVzZSBwcm9kdWN0cyBoYXZlIGFwcGVhcmVkIGFzIGNvbXBhcmVkIHRvIG90aGVycy4KCisgVGhlc2VzIHBsb3RzIHNob3dzIHRoZSAxMCBtb3N0IHNvbGQgaXRlbXMuIFdlIGNhbiB2aWV3IG1vcmUgYnkgY2hhbmdpbmcgdGhlIGFyZ3VtZW50IGB0b3BOYC4gCgorIFdob2xlIG1pbGsgYW5kIE90aGVyIHZlZ2V0YWJsZXMgYXJlIGluIHRoZSB0b3AuCgorIFRvIGJvb3N0IHRoZSBidXNpbmVzcyBvZiBjaXRydXMgZnJ1aXQsIHdlIG5lZWQgZm9yIGV4YW1wbGUgdG8gcHV0IGl0IGluIHRoZSB3YXkgb2YgdGhlIHdob2xlIG1pbGsgb3IgaW4gdGhlIHdheSBvZiBvdGhlciB2ZWdldGFibGVzLiAKCgojIyBBbHRlcm5hdGl2ZSB3YXkgdG8gZXh0cmFjdCB0aGUgbW9zdCBzb2xkIGl0ZW1zCgpgYGB7ciwgZWNobyA9IFRSVUV9CmxpYnJhcnkoZ2dwbG90MikKIyBIb3cgbWFueSB0cmFuc2FjdGlvbnMgYnkgcHJvZHVjdCwgdGhlIGRhdGEgd2lsbCBiZSBhcnJhbmdlZCBieSBkZXNjZW5kaW5nCmJhc2tldF9wbG90X3Byb2R1Y3RzIDwtIGJhc2tldCAlPiUgZ3JvdXBfYnkoaXRlbURlc2NyaXB0aW9uKSAlPiUgZHBseXI6OnN1bW1hcmlzZShOX29wZXJhdGlvbnM9bigpKSAlPiUgYXJyYW5nZShkZXNjKE5fb3BlcmF0aW9ucykpCgoKIyMgcGxvdCB0aGUgaGlzdG9ncmFtIG9mIHRoZSBiZXN0IDUwdGggc29sZCAgcHJvZHVjdHMKZ2dwbG90Mjo6Z2dwbG90KGJhc2tldF9wbG90X3Byb2R1Y3RzWzE6MTAsXSwgYWVzKHggPSByZW9yZGVyKGl0ZW1EZXNjcmlwdGlvbiwgLU5fb3BlcmF0aW9ucyksIHkgPSBOX29wZXJhdGlvbnMpKSArICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICNhZXNfc3RyaW5nKHggPSAnaXRlbURlc2NyaXB0aW9uJywgIHkgPSAnTl9vcGVyYXRpb25zJykgICMjIHdpdGhvdXQgb3JkZXJpbmcKIGdncGxvdDI6OmxhYnModGl0bGUgPSAiT3ZlcnZpZXcgb2YgdGhlIGZpcnN0IDEwdGggYmVzdCBzb2xkcyBwcm9kdWN0cyBkdXJpbmcgMjAxNC0yMDE1IiwKICAgICAgICAgICAgICAgI2ZpbGwgPSAiIiwKICAgICAgICAgICAgICAgeD0gIlRoZSBwcm9kdWN0cyIsCiAgICAgICAgICAgICAgI2NvbG91cj0gRGF0ZSwKICAgICAgICAgICAgICAgeSA9ICJUaGUgbnVtYmVyIG9mIHNhbGVzIGJ5IHByb2R1Y3QiKSArICAgIAogICAgICBnZ3Bsb3QyOjp0aGVtZShsZWdlbmQudGl0bGUgPSBlbGVtZW50X3RleHQoIGNvbG91cj0iYmxhY2siLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBzaXplPTExLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBmYWNlPSJib2xkIiksCiAgICAgICAgICAgICAgICAgICB0aXRsZSA9IGVsZW1lbnRfdGV4dCggc2l6ZSA9IDEyLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZhY2UgPSAnYm9sZCcKICAgICAgICAgICAgICAgICAgICksCiAgICAgICAgICAgICAgICAgICB0ZXh0ID0gZWxlbWVudF90ZXh0KHNpemUgPSAxMCwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmFjZT0gJ2JvbGQnCiAgICAgICAgICAgICAgICAgICApLAogICAgICAgICAgICAgICAgICAgYXhpcy50ZXh0Lng9ZWxlbWVudF90ZXh0KGFuZ2xlPTQ1LCBoanVzdD0xKSwKICAgICAgICAgICAgICAgICAgIGxlZ2VuZC5wb3NpdGlvbiA9ICJyaWdodCIsCiAgICAgICAgICAgICAgICAgICBsZWdlbmQuZGlyZWN0aW9uID0gInZlcnRpY2FsIgogICAgKSArCiBnZ3Bsb3QyOjpnZW9tX2JhcihzdGF0PSJpZGVudGl0eSIsIG5hLnJtPVRSVUUpCgoKYGBgCgojIyBBcHBseWluZyBvZiBgYGBBUFJJT1JJYGBgIGFsZ29yaXRobWUgCgpUaGUgbmV4dCBzdGVwIGlzIHRvIG1pbmUgdGhlIHJ1bGVzIHVzaW5nIHRoZSBgYGBBUFJJT1JJYGBgIGFsZ29yaXRobS4gVGhlIGZ1bmN0aW9uIGBgYGFwcmlvcmkoKWBgYCBpcyBmcm9tIGBhcnVsZXNgIHBhY2thZ2UuCgpXZSBjYW4gc2V0IGFuZCBvcHRpbWl6ZSB0aGUgcGFyYW1ldGVyIG9mIHRoZSBgbWluaW11bSBzdXBwb3J0YCBvZiAwLjAwMDEsIHRoZSBgbWluaW11bSBjb25maWRlbmNlYCBvZiAwLjgsIG1heGltdW0gb2YgMTAgYGl0ZW1zYCAobWF4bGVuKS4KCmBgYHtyfQojTWluIFN1cHBvcnQgYXMgMC4wMDAxLCBjb25maWRlbmNlIGFzIDAuOCBhbmQgbWF4aW11bSBvZiAxMCBwcm9kdWN0cy4KYXNzb2NpYXRpb24ucnVsZXMgPC0gYXJ1bGVzOjphcHJpb3JpKHRyX2xpc3QsIHBhcmFtZXRlciA9IGxpc3Qoc3VwcD0wLjAwMDEsIGNvbmY9MC44KSkgICMsIG1heGxlbj0xMAoKYGBgCgoqKkRlZmluaXRpb24qKgoKKyBJdGVtc2V0OiBDb2xsZWN0aW9uIG9mIG9uZSBvciBtb3JlIGl0ZW1zLiBLLWl0ZW0tc2V0IG1lYW5zIGEgc2V0IG9mIGsgaXRlbXMuCgorIFN1cHBvcnQgQ291bnQ6IEZyZXF1ZW5jeSBvZiBvY2N1cnJlbmNlIG9mIGFuIGl0ZW0tc2V0CgorIFN1cHBvcnQocyk6IEZyYWN0aW9uIG9mIHRyYW5zYWN0aW9ucyB0aGF0IGNvbnRhaW4gdGhlIGl0ZW0tc2V0CgojIyBTdW1tYXJ5IG9mIHRoZSBhc3NvY2lhdGVkIHJ1bGVzCiAgICAKYGBge3J9CiMgc3VtbWFyeSBydWxlcyBvZiBtaW4gU3VwcG9ydCBhcyAwLjAwMDEsIGNvbmZpZGVuY2UgYXMgMC44IGFuZCBtYXhpbXVtIG9mIDEwIHByb2R1Y3RzLgpzdW1tYXJ5KGFzc29jaWF0aW9uLnJ1bGVzKQpgYGAKCisgVGhlIHRvdGFsIG51bWJlciBvZiBydWxlcyBpczogKio2NDcqKgoKKyBEaXN0cmlidXRpb24gb2YgcnVsZSBsZW5ndGg6IEEgbGVuZ3RoIG9mIDQgaXRlbXMgaGFzIHRoZSBtb3N0IHJ1bGVzOiAqKjQzOCoqIGFuZCBhIGxlbmd0aCBvZiAqKjUqKiBpdGVtcyBoYXZlIHRoZSBsb3dlc3QgbnVtYmVyIG9mIHJ1bGVzOiAqKjc0KiouCgojIyBJbnNwZWN0IHRoZSB0b3AgMTAgcnVsZXMKCmBgYHtyfQppbnNwZWN0KGFzc29jaWF0aW9uLnJ1bGVzWzE6MTBdKQpgYGAKCioqSW50ZXJwcmV0YXRpb24qKgoKKyAxMDAlIG9mIHRoZSBjdXN0b21lcnMgd2hvIGJvdWdodCAnZG9tZXN0aWMgZWdncyxydWJiaW5nIGFsY29ob2wnIGFsc28gYm91Z2h0ICdyYW5rZnVydGVyJy4KCisgMTAwJSBvZiB0aGUgY3VzdG9tZXJzIHdobyBib3VnaHQgJ3Byb3NlY2NvLHdhZmZsZXMnIGFsc28gYm91Z2h0ICdzYXVzYWdlJy4KCiMjIEV4dHJhY3QgcnVsZXMgZnJvbSBnaXZlbiBwcm9kdWN0cwpGb3IgZXhhbXBsZSwgd2Ugd291bGQgbGlrZSB0byBrbm93IHdoYXQgY29zdHVtZXIgYnV5IGJlZm9yZSBidXlpbmcgYGNhbm5lZCBiZWVyYC4KCmBgYHtyfQpiZWVyLmFzc29jaWF0aW9uLnJ1bGVzIDwtIGFwcmlvcmkodHJfbGlzdCwgcGFyYW1ldGVyID0gbGlzdChzdXBwPTAuMDAwMSwgY29uZj0wLjgpLGFwcGVhcmFuY2UgPSBsaXN0KGRlZmF1bHQ9ImxocyIscmhzPSJjYW5uZWQgYmVlciIpKQpgYGAKCiMjIEluc3BlY3QgdGhlIHRvcCAxMCBydWxlcwoKYGBge3J9CiMgbGhzPSBjYW5uZWQgYmVlciBiZWNhdXNlIHlvdSB3YW50IHRvIGZpbmQgb3V0IHRoZSBwcm9iYWJpbGl0eSBvZiB0aGF0IGluIGhvdyBtYW55IGN1c3RvbWVycyBidXkgY2FubmVkIGJlZXIgYWxvbmcgd2l0aCBvdGhlciBpdGVtcwppbnNwZWN0KGhlYWQoYmVlci5hc3NvY2lhdGlvbi5ydWxlcykpCmBgYAoqKkludGVycHJldGF0aW9uKioKCisgQ2FubmVkIGJlZXIgKCoqUkhTKiopIHdhcyBCb3VnaHQgYWZ0ZXIgYWxsIHN1Yi1iYXNrZXRzICh3aXRoIHR3byBpdGVtcykgaW4gdGhlICoqTEhTKiogY29sdW1uLgoKIyBWaXN1YWxpemluZyBBc3NvY2lhdGlvbiBSdWxlcwoKQSBzdHJhaWdodC1mb3J3YXJkIHZpc3VhbGl6YXRpb24gb2YgYXNzb2NpYXRpb24gcnVsZXMgaXMgdG8gdXNlIGEgc2NhdHRlciBwbG90IHVzaW5nIHBsb3QoKSBvZiB0aGUgYGFydWxlc1ZpemAgcGFja2FnZS4KSXQgdXNlcyBgU3VwcG9ydGAgYW5kIGBDb25maWRlbmNlYCBvbiB0aGUgYXhlcy4KCiMgVmlzdWFsaXplIHRoZSBydWxlcwoKIyMgc2NhdHRlciBwbG90IHdpdGggNjQ3IHJ1bGVzCmBgYHtyfQpsaWJyYXJ5KGFydWxlc1ZpeikKIyBGaWx0ZXIgcnVsZXMgd2l0aCBjb25maWRlbmNlIGdyZWF0ZXIgdGhhbiAwLjQgb3IgNDAlCnN1YlJ1bGVzPC1hc3NvY2lhdGlvbi5ydWxlc1txdWFsaXR5KGFzc29jaWF0aW9uLnJ1bGVzKSRjb25maWRlbmNlPjAuNF0KI1Bsb3QgU3ViUnVsZXMKcGxvdChzdWJSdWxlcykKYGBgCgpUaGUgYWJvdmUgcGxvdCBzaG93cyB0aGF0IHJ1bGVzIHdpdGggaGlnaCBsaWZ0IGhhdmUgbG93IHN1cHBvcnQuIFdlIGNhbiB1c2UgdGhlIGZvbGxvd2luZyBvcHRpb25zOgoKIyMgVHdvLWtleSBQbG90CgpgYGB7cn0KcGxvdChzdWJSdWxlcyxtZXRob2Q9InR3by1rZXkgcGxvdCIpCmBgYAorIFRoZSB0d28ta2V5IHBsb3QgdXNlcyBzdXBwb3J0IGFuZCBjb25maWRlbmNlIG9uIHggYW5kIHktYXhpcyByZXNwZWN0aXZlbHkuIAoKKyBJdCB1c2VzIG9yZGVyIGZvciBjb2xvcmluZy4gVGhlIG9yZGVyIGlzIHRoZSBudW1iZXIgb2YgcHJvZHVjdHMgaW4gdGhlIHJ1bGUuCgojIyAgSW50ZXJhY3RpdmUgdmlzdWFsaXNhdGlvbiBvZiB0aGUgUnVsZXMKCmBgYHtyfQojdG9wMTBzdWJSdWxlcyA8LSBoZWFkKHN1YlJ1bGVzLCBuID0gMTAsIGJ5ID0gImNvbmZpZGVuY2UiKQpwbG90KHN1YlJ1bGVzWzE6MjBdLCBtZXRob2QgPSAiZ3JhcGgiLCAgZW5naW5lID0gImh0bWx3aWRnZXQiLCBjb250cm9sID0gbGlzdCh0eXBlID0gIml0ZW1zIikpCmBgYApUaGUgQXJyb3dzIHBvaW50aW5nIGZyb20gcHJvZHVjdHMgdG8gcnVsZSB2ZXJ0aWNlcyBpbmRpY2F0ZSBgTEhTYCBwcm9kdWN0cyBhbmQgYW4gYXJyb3cgZnJvbSBhIHJ1bGUgdG8gYW4gcHJvZHVjdCBpbmRpY2F0ZXMgdGhlIGBSSFNgLgoKKipJbnRlcnByZXR0YWlvbioqCisgVGhlIGdyYXBoIHNob3dzIHRhaHQgYWxsIHJ1bGVzIG9yIGl0aW5lcmFyaWVzIGZvY3VzIG9yIGB3aG9tZSBtaWxrYCBhbmQgYFZlZ2V0YWJsZXNgLgoKKyBUaGUgZ3JhcGggc2hvd3MgYWxzbyB0aGUgcGVvcGxlIHdobyBidXkgYHRlYWAgYW5kIGBmcm96ZW5zIHZlZ2V0YWJsZXNgIGFsc28gYnV5IGBjYXQgZm9vZGAuIFdlIHNob3VsZCBwbGFjZSB0aGVzZSBpbiBhbiBhaXNsZSB0b2dldGhlci4KCiMgSW5kaXZpZHVhbCBSdWxlIFJlcHJlc2VudGF0aW9uCgpUaGUgYFBhcmFsbGVsIENvb3JkaW5hdGVzIFBsb3RgICBpcyB1c2VmdWwgdG8gdmlzdWFsaXplZCB3aGljaCBpdGVtcyB3ZXJlIHB1cmNoYXNlZCB3aXRoIGFuIG90aGVyIG9uZS4KCmBgYHtyfQojIEZpbHRlciB0b3AgMTAgcnVsZXMgd2l0aCBoaWdoZXN0IGxpZnQKI3N1YlJ1bGVzMjwtaGVhZChzdWJSdWxlcywgbj0xNiwgYnk9ImxpZnQiKQpwbG90KHN1YlJ1bGVzWzE6MTBdLCBtZXRob2Q9InBhcmFjb29yZCIsIGNvbnRyb2wgPSBsaXN0KHJlb3JkZXIgPSBUUlVFKSkKYGBgCgoqKkludGVycHJldGF0aW9uKioKCisgVGhlIHBsb3Qgc2hvd3MgdGhlIGl0aW5lcmFyeSBvZiB0aGUgY29zdHVtZXJzIGR1cmluZyB0aGUgc2hvcHBpbmcuCgorIFRoZSB0b3AgMTAgcnVsZXMgc2hvdyB1cyB0aGF0IHdoZW4gY29zdHVtZXJzIGhhdmUgYHdob2xlIG1pbGtgIGFuZCBgc29hcGAsICBJdCB3aWxsIGJlICBoaWdobHkgbGlrZWx5IHRoYXQgdGhleSBidXkgYHRyb3BpY2FsIGZydWl0YC4KCisgVGhlIGB3aG9sZSBtaWxrYCBpcyBsb2NhdGVkIGF0IHRoZSBmaXJzdCBwb3NpdGlvbi4gVGhpcyBtZWFucyB0aGF0IHRoZXJlIGlzIG5vIHJ1bGUgdG8gYnV5IGl0LiBPciBJdCBpcyB3ZWxsIGV4cGxvc2VkIGZvciBjdXN0b21lcnMuCgorIEVhY2ggYXJyb3cgY29ycmVzcG9uZHMgdG8gYSBydWxlLgoKCiMgQ29uY2x1c2lvbgoKKyBUaGUgdmlzdWFsaXppbmcgZ3JhcGhzIGFuZCBydWxlcyxoZWxwIHVzIHRvIHRha2UgZGVjaXNpb25zIGZvciB0aGUgcG9zaXRpb25pbmcgb2YgaXRlbXMgaW4gdGhlIHN1cGVybWFya2V0LgoKKyBOb3csIHdlIHdvdWxkIHBsYWNlIGBXaG9sZSBNaWxrYCBhbmQgYFZlZ2V0YWJsZXNgIGJlc2lkZSBlYWNoIG90aGVyOyBgdGVhYCBhbmQgYGZyb3plbnMgdmVnZXRhYmxlc2AgYWxzbyBidXkgYGNhdCBmb29kYCBhbG9uZyBzaWRlIHRvby4K</div>
 
 
 
