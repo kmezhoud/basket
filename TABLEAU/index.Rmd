@@ -1,0 +1,54 @@
+---
+title: "TABLEAU Assays"
+author: "Karim Mezhoud"
+date: "12/15/2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+
+##  Top 10 sold Items for the Top 10 Costumers
+There are different graphes that can illustrate le most important purchased items and the most important costumers.
+
+### Highlight table of the Top 10 items vs Top 10 costumers
+
+With this highlight table we can view the frequency of the purchases of each item, for each costumer, and during ceratin period.
+
+![Top10 costumers - Top10 products](Top10Cos_Top10_item_HeatMap.png)
+
+### Individual Bar plot for each costumer
+This graph is useful if we want to compare simultaneously each items consumption for the most important costumers.
+
+![Individual Histogram for Top 10 vs Top 10](TopTopHistogram.png)
+
+### Stacked Bar plot
+This bar plot is intersting and make easy to identify the difference between costumers uptakes.
+
+![Stacked Histigram](TopTopHist_Collapse.png)
+
+## Highlight table of the behavior of the top 10 costumers by items 
+
+This highlight table shows us that 2015 has more active business than 2014, at less for whole milk. 
+
+![Costumers Behavior](Costumer_Behavior.png)
+
+## Highlight table of the behavior of the top 10 costumers for all items
+![Costumers Behavior](Top10_Behavior.png)
+
+
+### Video -  How to generate highlight tables of Top 10s and Behavior 
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/4rygQswqD5g" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+
+## Highlight table: Correlation between Top 10 sold items
+We use ```arules``` algorithme to plot the top 10 purchased items. Surprisingly, the top 10 items are also the most correlated. 
+
+![Items sold correlation](Items_Correlation.png)
+
+
+
+### Video -  How to generate the highlight table of the correlation between the top 10 items
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0vTD0dLt1vY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
