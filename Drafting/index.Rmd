@@ -1,0 +1,332 @@
+---
+title: "Drafting"
+author: "Karim Mezhoud"
+date: "12/11/2018"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+  word_document: default
+---
+
+The goal of this exercice is to decipher relevant knowledge from Basket DataSet.
+
+```{r setup, include=FALSE}
+# Load dataset from url
+basket <- read.csv("http://www.evodevo.it/wp-content/uploads/2018/12/basket.csv")
+# Backup the dataset
+#write.csv(basket, file = "basket_bkp.csv")
+```
+
+## Summarise basket object
+
+```{r}
+# get the structure of the dataset
+str(basket)
+summary(basket)
+
+```
+The dataset is a dataframe with 3 columns: Member_number, Date, and Products description.
+The `Member_number` column must be considered as factor, like the id of member.
+The `Date` must be a date type.
+The `itemDascription` is already as.factor
+
+## convert the type of variables
+
+```{r}
+library(magrittr)
+library(dplyr)
+basket$Member_number <- as.factor(basket$Member_number)
+basket$Date <- as.Date(basket$Date, "%d-%m-%Y")
+# review the structure and summary
+str(basket)
+summary(basket)
+```
+Now is better formated. We can observe:
++ The Member `3180` has the biggest operations (36). 
++ The `Whole milk` product is the most sold with 2502 operations.
++ The sampling data was done during two years, between 2014-01-01 and 2015-12-30.
+
+Before to start the exploration, It is important to check if the dataset countain empty cells or non available data.
+
+## check for any empty or NA cell
+
+```{r}
+# Ckeck for Non Available (NA) cell
+all(is.na(basket))
+
+```
+
+There is an intersting package named `funModeling` that make eeasy the exploration of Data analysis. We will use it.
+
+```{r}
+library(funModeling) 
+library(tidyverse) 
+library(Hmisc)
+
+tibble::glimpse(basket)
+```
+`glimpse` function returns informations like `str`.
+
+```{r}
+ funModeling::df_status(basket)
+```
+
+`df_statut` allows us to detect abnormal values and if is there non available or empty cells.
+
+
+
+
+```{r}
+ freq(basket) 
+```
+
+
+
+```{r}
+library(Hmisc)
+Hmisc::describe(basket)
+```
+
+
+## Filter and screen the dataframe
+
+At this step it is importante to know the number of Members and the number of products.
+```{r}
+library(magrittr)
+# How many member
+base::table(basket$Member_number) %>% length()
+# 3898
+# How many operations
+length(basket$Member_number)
+# 38765
+
+# How many products
+base::table(basket$itemDescription) %>% length()
+# 167
+
+
+```
+For all we have 3898 members and 167 products, and 38765 operations. This means that several members made several operations. How many operation per Members? And How many operations per product?
+
+##  How many operations per Member
+
+```{r}
+library(dplyr)
+# How many transactions by Member, the data will be arranged by descending
+basket %>% group_by(Member_number) %>% arrange(Member_number) %>% dplyr::summarise(N_operation=n()) %>% arrange(desc(N_operation))
+
+#basket_plot_operations <- basket %>% group_by(Member_number, Date) %>% summarise(N_operation=n()) %>% arrange(desc(N_operation))
+
+#ggplot2::ggplot(basket_plot_operations[1:100,], aes_string(x = 'Date', y = 'N_operation')) +
+ # ggplot2::geom_bar(stat="identity", na.rm=TRUE)
+
+```
+This table confirm that the Member `3180` ahs the biggest frequency of operations `36`.
+We can see the first ten important Members which got the biggest numbers of operations. 
+
+
+```{r}
+
+# How many Operations were done by product during 2 Years. The data will be arranged by descending
+basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
+
+```
+
+This table shows arranges by descending the most important sold products. 
+
+We can visualize the first 50th best solds as following:
+
+```{r, echo = TRUE}
+# How many transactions by product, the data will be arranged by descending
+basket_plot_products <- basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
+
+
+## plot the histogram of the best 50th sold  products
+ggplot2::ggplot(basket_plot_products[1:50,], aes(x = reorder(itemDescription, -N_operations), y = N_operations)) +      
+                                             #aes_string(x = 'itemDescription',  y = 'N_operations')  ## without ordering
+ ggplot2::labs(title = "Overview of the first 50th best solds products during 2014-2015",
+               #fill = "",
+               x= "The products",
+              #colour= Date,
+               y = "The number of sales by product") +    
+      ggplot2::theme(legend.title = element_text( colour="black",
+                                                size=11,
+                                                face="bold"),
+                   title = element_text( size = 12,
+                                         face = 'bold'
+                   ),
+                   text = element_text(size = 10,
+                                       face= 'bold'
+                   ),
+                   axis.text.x=element_text(angle=45, hjust=1),
+                   legend.position = "right",
+                   legend.direction = "vertical"
+    ) +
+ ggplot2::geom_bar(stat="identity", na.rm=TRUE)
+
+
+```
+
+
+
+
+```{r}
+# Monitoring the operations number  were done per days, for all products during 2 years. The data will be arranged by descending
+ basket_plot_date <-  basket %>% group_by(Date) %>% dplyr::summarise(N_operations=n()) # %>% arrange(desc(N_operations))
+attach(basket_plot_date )
+basket_plot_date %>%
+ggplot(aes(x = Date, y = N_operations)) +
+      geom_point(color = "darkorchid4") +
+      geom_smooth(method = 'loess')+
+      labs(title = "Total Operations per day during the all period (2 years)",
+           subtitle = "Each value is the sum of all operations for all Members",
+           y = "Number of Operations",
+           x = "Date") + theme_bw(base_size = 15)
+```
+
+```{r}
+fit <- lm(N_operations~.,data= basket_plot_date)
+plot(fit)
+```
+
+
+
+
+```{r}
+# library(tidyverse)
+#  basket <- read.csv("basket_bkp.csv", header = TRUE, sep = ",")
+# basket$X <- NULL
+#  basket$Member_number <-as.factor(basket$Member_number)
+# basket$Date <- as.Date(basket$Date, "%d-%m-%Y")
+# 
+# basket.new <- mutate(basket, variable = rownames(basket)) %>% 
+#  tidyr::gather(basket, Date, itemDescription)
+```
+
+
+
+
+## Regroupe all Operations by Month (December 2015)
+```{r}
+## Determine the most 10 sold products
+basket_products <- basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
+basket_products10 <- as.data.frame(basket_products[1:10,])
+
+basket %>% filter(itemDescription =="whole milk")
+
+## Regroup all sold products in December 2015 (add index for each operation)
+ #basket %>% #mutate(index = as.factor(seq.int(nrow(basket)))) %>%
+ #mutate(Month = format(Date, "%B"), Year = format(Date, "%Y")) %>% arrange(desc(Date)) %>% filter(Month == "December", #Year == "2015") %>% dplyr::mutate(N = dplyr::summarise( n()))
+  
+ ## add a new column with Month_Year
+ basket.Year_Month <- basket %>% mutate(Year_Month = substr(basket$Date, 1,7)) 
+ 
+ # basket <- read.csv("basket_bkp.csv", header = TRUE, sep = ",")
+ # basket$X <- NULL
+ # basket %>% mutate(Member_number = as.factor(Member_number))
+ # basket$Date <- as.Date(basket$Date, "%d-%m-%Y")
+  
+  #basket$Year_Month <- zoo::as.yearmon(basket$Year_Month)
+
+basket.Year_Month%>% dplyr::group_by(Year_Month) %>%
+  dplyr::summarise(N_Operations=n()) 
+ 
+# Plot a subset of the data
+#attach(Operations_Per_Month)
+#ggplot(data =  Operations_Per_Month, aes_string(x = zoo::as.yearmon(Year_Month), y = N_operations)) + 
+ # geom_line(color = "#FC4E07")
+
+
+```
+
+
+## add index for each operation
+
+```{r}
+basket %>% mutate(index = as.factor(seq.int(nrow(basket)))) 
+
+```
+
+## Filter the 10 best sold products
+```{r}
+basket_products <- basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
+basket_products[1:10,]
+
+```
+
+
+## Explore if all operations for each Member were done in the same day 
+The idea is to associate products per basket for each Member.
+
+```{r}
+## group operations by Member and filter it by date
+basket %>% group_by(Member_number) %>% arrange(Member_number) %>% filter(Date=="2015-05-27")
+
+
+```
+When We explore manually the table, we can see that some products sold together in the same date for the same Member.
+The response is: YES
+INITIATIVE TO PREDICT RULES BETWEEN PRODUCTS  SOLD IN THE SAME TIME (BASKET: a group of products) IN SUPERMARKET FOR EXAMPLE.
+
+## combine all products per one Member
+
+```{r}
+library(plyr)
+#ddply(dataframe, variables_to_be_used_to_split_data_frame, function_to_be_applied)
+transactionData_collapse_product <- plyr::ddply(basket,c("Member_number", "Date"),
+                       function(basket)paste(basket$itemDescription,
+                       collapse = ","))
+transactionData_collapse_product
+```
+
+
+```{r}
+# remove Customer ID as we do not need it
+transactionData_collapse_product$Member_number <- NULL
+# remove Date as we do not need it
+transactionData_collapse_product$Date <- NULL
+colnames(transactionData_collapse_product) <- c("Products")
+write.csv(transactionData_collapse_product, file = "transaction.csv", quote = FALSE, row.names = FALSE)
+transactionData_collapse_product
+```
+
+
+
+## Predict a rule between Product in each basket
+
+Load `transaction.csv` to R, we will use read.transactions() function from `Arules` package this time.
+
+
+```{r}
+library(arules)
+trans_basket <- read.transactions('transaction.csv', format = 'basket', sep=',')  #, rm.duplicates=TRUE
+
+str(trans_basket)
+trans_basket
+summary(trans_basket) # call in summary to check our data
+```
+We can explore the data and make the frequency plot using the itemFrequencyPlot() function in the `arules` package. 
+For this plot, we will check the top 10 products with absolute & relative frequency. The two plots give the same bihavior. 
+
+```{r}
+par(mfrow=c(1,2))
+itemFrequencyPlot(trans_basket, topN=10, type='absolute', main="Absolute Product Frequency Plot")
+itemFrequencyPlot(trans_basket, topN=10, type='relative', main="Relative Product Frequency Plot")
+```
+
+## Modeling and Evaluation
+
+We can start by mining the data for overall association rules.
+
+Refering to our item frequency plots, let’s try to set minimum support at 1 in 1,000 operations and minimum confidence at 70 percent. Also we set the maximum number of Products to be associated as two
+
+```{r}
+basket_rules <- arules::apriori(trans_basket, parameter = list(supp = 0.01, conf = 0.8))  #, maxlen=5
+rules <- sort(basket_rules, by='confidence', decreasing = TRUE)
+summary(rules)
+```
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
