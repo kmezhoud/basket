@@ -10,7 +10,7 @@ output:
   word_document: default
 ---
 # Boost Business of retail supermarket
-The goal of this exercice is to decipher relevant knowledges from Baskets DataSet and boost the business by prositionning products (items).
+The goal of this exercice is to decipher relevant knowledges from Baskets DataSet and boost the business by positionning the items.
 
 ```{r setup, include=FALSE}
 # Load dataset from url
@@ -36,8 +36,6 @@ The `itemDascription` is already as.factor
 ## convert the type of variables
 
 ```{r}
-library(magrittr)
-library(dplyr)
 library(tibble)
 
 basket$Member_number <- as.factor(basket$Member_number)
@@ -57,13 +55,16 @@ basket
 ```
 
 Now is better formated. We can observe:
+
 + The Member_number `3180` has the biggest transactions (36). 
+
 + The `Whole milk` is the most sold with 2502 transactions.
+
 + The sampling data was done during two years, between 2014-01-01 and 2015-12-30.
 
 Before to start the exploration, It is important to check if the dataset countain empty cells or non available data.
 
-## check for any empty or NA cell
+## Check for any empty or NA cell
 
 ```{r}
 # Ckeck for Non Available (NA) cell
@@ -95,11 +96,11 @@ The dataset has three variables that describe the `transaction` of multiple `cos
 
 # Exploratory Data Analysis
 
-Please, follow this link to the [Drafting](https://kmezhoud.github.io/basket/Drafting/) section.
+Please, find the exploratory steps in [Drafting](https://kmezhoud.github.io/basket/Drafting/) section.
 
 
 # Market Basket Analysis
-This datasetdescribes the transactions done in supermarket during two years. 
+This dataset describes the transactions done in supermarket during two years. 
 The Market Basket Analysis (MBA) uses `Association Rule`  to extract knowledge about the items, and costumers. 
 The goal of this exercice is to use this data to boost the business. The idea is to change for example the layout of the physical store or rather an online store. For example, put particular product with bad sold rate near to a product with a good rate of sold to boost the business. 
 
@@ -193,6 +194,8 @@ The option `absolute` plots numeric frequencies of each item independently. The 
 ## Alternative way to extract the most sold items
 
 ```{r, echo = TRUE}
+library(magrittr)
+library(dplyr)
 library(ggplot2)
 # How many transactions by product, the data will be arranged by descending
 basket_plot_products <- basket %>% group_by(itemDescription) %>% dplyr::summarise(N_operations=n()) %>% arrange(desc(N_operations))
