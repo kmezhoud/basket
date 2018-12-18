@@ -343,13 +343,14 @@ plot(subRules[1:10], method="paracoord", control = list(reorder = TRUE))
 
 + The top 10 rules show us that when costumers have `whole milk` and `soap`,  It will be  highly likely that they buy `tropical fruit`.
 
-+ The `whole milk` is located at the first position. This means that there is no rule to buy it. Or It is well explosed for customers.
-
 + Each arrow corresponds to a rule.
+
++ There are 4 rules that coverge to `other vegetables`.
+
 
 
 # Conclusion
 
-+ The visualizing graphs and rules,help us to take decisions for the positioning of items in the supermarket.
++ The visualizing graphs and rules, help us to make decisions for the positioning of items in the supermarket.
 
 + Now, we would place `Whole Milk` and `Vegetables` beside each other; `tea` and `frozens vegetables` also buy `cat food` along side too.
