@@ -44,8 +44,11 @@ str(basket)
 summary(basket)
 ```
 Now is better formated. We can observe:
+
 + The Member `3180` has the biggest operations (36). 
+
 + The `Whole milk` product is the most sold with 2502 operations.
+
 + The sampling data was done during two years, between 2014-01-01 and 2015-12-30.
 
 Before to start the exploration, It is important to check if the dataset countain empty cells or non available data.
@@ -79,7 +82,7 @@ tibble::glimpse(basket)
 
 
 ```{r}
- freq(basket) 
+ #freq(basket) 
 ```
 
 
@@ -187,8 +190,21 @@ ggplot(aes(x = Date, y = N_operations)) +
 ```
 
 ```{r}
-fit <- lm(N_operations~.,data= basket_plot_date)
-plot(fit)
+#basket_plot_date$months <- as.factor(months(basket_plot_date$Date))
+basket_plot_date$months <- as.factor(format(as.Date(basket_plot_date$Date), "%y-%m"))
+#par(mfrow=c(2,1))
+plot( basket_plot_date$Date, basket_plot_date$N_operations, ylab = "N° Transactions", xlab = "Date")
+fit_day <- lm(N_operations ~ Date,data= basket_plot_date)
+lines(basket_plot_date$Date, fit_day$fitted.values)
+
+plot(basket_plot_date$months, basket_plot_date$N_operations, ylab = "N° Transactions", xlab = "Months")
+fit_month <- lm(N_operations ~ months,data= basket_plot_date)
+
+summary(fit_day)
+summary(fit_month)
+fit_day$coeff
+fit_month$coefficients
+
 ```
 
 
