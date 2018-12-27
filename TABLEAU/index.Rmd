@@ -69,3 +69,5 @@ The question is: How can TABLEAU handle dataframe or tibble with R? It is very u
 ### Training to integrate R in TABLEAU
 
 ![Integrate TABLEAU with R](certificate_TABLEAU_R.png)
+
+![Data Science for Marketing: R, Python, TABLEAU](DataScience_Marketing.png)
