@@ -345,4 +345,8 @@ summary(rules)
 ```
 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# certificates
+
+### Intermediate R programming for Data Analyst
+
+![Dataquest certificate](intermediate_R_programming.png)
